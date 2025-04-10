@@ -1,6 +1,6 @@
 # QBin-Pages
 
-QBin 在线HTML编辑与分享平台的静态资源存储库
+QBin 在线HTML编辑与分享平台的内容存储库
 
 ## 关于本仓库
 
