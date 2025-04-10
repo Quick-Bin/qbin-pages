@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Steganography Tool</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f7f9fc;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .copy-button {
+            background-color: #27ae60;
+        }
+        .copy-button:hover {
+            background-color: #219653;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        .tab.active {
+            border-bottom: 2px solid #3498db;
+            color: #3498db;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Text Steganography Tool</h1>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="encode">Encode</div>
+            <div class="tab" data-tab="decode">Decode</div>
+            <div class="tab" data-tab="clean">Clean</div>
+        </div>
+        
+        <div class="tab-content active" id="encode-tab">
+            <div class="form-group">
+                <label for="secret-text">Secret Text to Hide:</label>
+                <textarea id="secret-text" placeholder="Enter the text you want to hide..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="carrier-text">Carrier Text:</label>
+                <textarea id="carrier-text" placeholder="Enter the text that will carry your hidden message..."></textarea>
+            </div>
+            
+            <button id="encode-button">Encode</button>
+            
+            <div class="result" id="encode-result" style="display: none;">
+                <label>Encoded Text:</label>
+                <div id="encoded-text"></div>
+                <div class="button-group">
+                    <button class="copy-button" id="copy-encoded">Copy</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="decode-tab">
+            <div class="form-group">
+                <label for="encoded-input">Encoded Text:</label>
+                <textarea id="encoded-input" placeholder="Enter the text that contains hidden message..."></textarea>
+            </div>
+            
+            <button id="decode-button">Decode</button>
+            
+            <div class="result" id="decode-result" style="display: none;">
+                <label>Hidden Message:</label>
+                <div id="decoded-text"></div>
+                <div class="button-group">
+                    <button class="copy-button" id="copy-decoded">Copy</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="clean-tab">
+            <div class="form-group">
+                <label for="text-to-clean">Text with Hidden Content:</label>
+                <textarea id="text-to-clean" placeholder="Enter the text to clean of hidden content..."></textarea>
+            </div>
+            
+            <button id="clean-button">Clean</button>
+            
+            <div class="result" id="clean-result" style="display: none;">
+                <label>Cleaned Text:</label>
+                <div id="cleaned-text"></div>
+                <div class="button-group">
+                    <button class="copy-button" id="copy-cleaned">Copy</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Constants for variation selector ranges
+        const VARIATION_SELECTOR_START = 0xfe00;
+        const VARIATION_SELECTOR_END = 0xfe0f;
+        const VARIATION_SELECTOR_SUPPLEMENT_START = 0xe0100;
+        const VARIATION_SELECTOR_SUPPLEMENT_END = 0xe01ef;
+
+        // Convert byte to variation selector
+        function toVariationSelector(byte) {
+            if (0 <= byte && byte < 16) {
+                return String.fromCodePoint(VARIATION_SELECTOR_START + byte);
+            } else if (16 <= byte && byte < 256) {
+                return String.fromCodePoint(VARIATION_SELECTOR_SUPPLEMENT_START + byte - 16);
+            } else {
+                return null;
+            }
+        }
+
+        // Convert variation selector to byte
+        function fromVariationSelector(codePoint) {
+            if (VARIATION_SELECTOR_START <= codePoint && codePoint <= VARIATION_SELECTOR_END) {
+                return codePoint - VARIATION_SELECTOR_START;
+            } else if (VARIATION_SELECTOR_SUPPLEMENT_START <= codePoint && codePoint <= VARIATION_SELECTOR_SUPPLEMENT_END) {
+                return codePoint - VARIATION_SELECTOR_SUPPLEMENT_START + 16;
+            } else {
+                return null;
+            }
+        }
+
+        // Encode text into carrier
+        function encode(text, carrier) {
+            // Convert text to UTF-8 bytes
+            const encoder = new TextEncoder();
+            const bytesData = encoder.encode(text);
+            
+            // If carrier is empty, use default character
+            if (!carrier) {
+                carrier = "A";
+            }
+            
+            // Convert carrier to array of characters
+            const carrierChars = Array.from(carrier);
+            let result = "";
+            
+            // If hidden text bytes are less than or equal to carrier text
+            if (bytesData.length <= carrierChars.length) {
+                // Create array of positions and shuffle
+                const positions = Array.from({length: carrierChars.length}, (_, i) => i);
+                shuffleArray(positions);
+                
+                // Select first bytesData.length positions
+                const selectedPositions = positions.slice(0, bytesData.length).sort((a, b) => a - b);
+                
+                // Build result string by inserting variation selectors at selected positions
+                let byteIndex = 0;
+                for (let i = 0; i < carrierChars.length; i++) {
+                    result += carrierChars[i];
+                    
+                    // Check if current position is selected
+                    if (selectedPositions.includes(i) && byteIndex < bytesData.length) {
+                        const selector = toVariationSelector(bytesData[byteIndex]);
+                        if (selector) {
+                            result += selector;
+                        }
+                        byteIndex++;
+                    }
+                }
+            } else {
+                // If hidden text bytes are more than carrier text
+                let byteIndex = 0;
+                
+                // First distribute bytes evenly among carrier characters
+                for (let i = 0; i < carrierChars.length; i++) {
+                    result += carrierChars[i];
+                    
+                    if (byteIndex < bytesData.length) {
+                        const selector = toVariationSelector(bytesData[byteIndex]);
+                        if (selector) {
+                            result += selector;
+                        }
+                        byteIndex++;
+                    }
+                }
+                
+                // Add remaining bytes to the last character
+                while (byteIndex < bytesData.length) {
+                    const selector = toVariationSelector(bytesData[byteIndex]);
+                    if (selector) {
+                        result += selector;
+                    }
+                    byteIndex++;
+                }
+            }
+            
+            return result;
+        }
+
+        // Helper function to shuffle array
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // Decode hidden text from encoded text
+        function decode(encodedText) {
+            const decoded = [];
+            const chars = Array.from(encodedText);
+            
+            // Iterate through each character, check for variation selectors
+            let i = 0;
+            while (i < chars.length) {
+                // Check for consecutive variation selectors after current character
+                let iNext = i + 1;
+                while (iNext < chars.length) {
+                    const nextChar = chars[iNext];
+                    const byte = fromVariationSelector(nextChar.codePointAt(0));
+                    
+                    if (byte !== null) {
+                        decoded.push(byte);
+                        iNext++;
+                    } else {
+                        break; // Exit inner loop if not a variation selector
+                    }
+                }
+                
+                i = iNext;
+            }
+            
+            // Convert byte array back to string
+            const decoder = new TextDecoder();
+            return decoder.decode(new Uint8Array(decoded));
+        }
+
+        // Clean hidden text (remove variation selectors)
+        function cleanHiddenText(text) {
+            if (!text) {
+                return '';
+            }
+            
+            let result = '';
+            
+            for (const char of text) {
+                const codePoint = char.codePointAt(0);
+                
+                // Add non-variation selector characters to result
+                if (!((VARIATION_SELECTOR_START <= codePoint && codePoint <= VARIATION_SELECTOR_END) || 
+                      (VARIATION_SELECTOR_SUPPLEMENT_START <= codePoint && codePoint <= VARIATION_SELECTOR_SUPPLEMENT_END))) {
+                    result += char;
+                }
+            }
+            
+            return result;
+        }
+
+        // Tab functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and contents
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                // Show corresponding content
+                const tabName = tab.getAttribute('data-tab');
+                document.getElementById(`${tabName}-tab`).classList.add('active');
+            });
+        });
+
+        // Encode button functionality
+        document.getElementById('encode-button').addEventListener('click', () => {
+            const secretText = document.getElementById('secret-text').value;
+            const carrierText = document.getElementById('carrier-text').value;
+            
+            if (!secretText) {
+                alert('Please enter a secret text to hide.');
+                return;
+            }
+            
+            const encodedText = encode(secretText, carrierText);
+            document.getElementById('encoded-text').textContent = encodedText;
+            document.getElementById('encode-result').style.display = 'block';
+        });
+
+        // Decode button functionality
+        document.getElementById('decode-button').addEventListener('click', () => {
+            const encodedInput = document.getElementById('encoded-input').value;
+            
+            if (!encodedInput) {
+                alert('Please enter encoded text to decode.');
+                return;
+            }
+            
+            const decodedText = decode(encodedInput);
+            document.getElementById('decoded-text').textContent = decodedText;
+            document.getElementById('decode-result').style.display = 'block';
+        });
+
+        // Clean button functionality
+        document.getElementById('clean-button').addEventListener('click', () => {
+            const textToClean = document.getElementById('text-to-clean').value;
+            
+            if (!textToClean) {
+                alert('Please enter text to clean.');
+                return;
+            }
+            
+            const cleanedText = cleanHiddenText(textToClean);
+            document.getElementById('cleaned-text').textContent = cleanedText;
+            document.getElementById('clean-result').style.display = 'block';
+        });
+
+        // Copy buttons functionality
+        document.getElementById('copy-encoded').addEventListener('click', () => {
+            copyToClipboard(document.getElementById('encoded-text').textContent);
+        });
+        
+        document.getElementById('copy-decoded').addEventListener('click', () => {
+            copyToClipboard(document.getElementById('decoded-text').textContent);
+        });
+        
+        document.getElementById('copy-cleaned').addEventListener('click', () => {
+            copyToClipboard(document.getElementById('cleaned-text').textContent);
+        });
+
+        // Helper function to copy text to clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text)
+                .then(() => {
+                    alert('Copied to clipboard!');
+                })
+                .catch(err => {
+                    console.error('Failed to copy: ', err);
+                });
+        }
+    </script>
+</body>
+</html>
