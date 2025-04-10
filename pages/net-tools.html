@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTTP Archive Converter</title>
+    <script type="application/javascript">
+        var module = {};
+    </script>
+    <script type="application/javascript" src="https://unpkg.com/har-to-curl"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            height: calc(100vh - 40px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tabs {
+            display: flex;
+            padding: 10px 20px 0;
+            border-bottom: 1px solid #eee;
+            background: #fff;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 14px;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            border-bottom: 2px solid #007bff;
+            color: #007bff;
+        }
+
+        .editor-container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 20px;
+            min-height: 0;
+        }
+
+        .editor-half {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        textarea {
+            flex: 1;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            resize: none;
+            background-color: #fafafa;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #007bff;
+            background-color: #fff;
+        }
+
+        .tab-content {
+            flex: 1;
+            display: none;
+            min-height: 0;
+        }
+
+        .tab-content.active {
+            display: flex;
+        }
+
+        .format-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .format-button {
+            padding: 6px 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .format-button:hover {
+            background: #0056b3;
+        }
+
+        @media (max-width: 768px) {
+            .editor-container {
+                flex-direction: column;
+            }
+
+            .editor-half {
+                height: 50%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('har2curl')">HAR to cURL</button>
+            <button class="tab" onclick="switchTab('curl2python')">cURL to Python</button>
+            <button class="tab" onclick="switchTab('headers')">Headers Formatter</button>
+        </div>
+
+        <div id="har2curl" class="tab-content active">
+            <div class="editor-container">
+                <div class="editor-half">
+                    <div class="editor-label">Input HAR</div>
+                    <textarea id="harInput" placeholder="Paste your HAR data here..."></textarea>
+                </div>
+                <div class="editor-half">
+                    <div class="editor-label">Output cURL</div>
+                    <textarea id="curlOutput" readonly placeholder="Converted cURL commands will appear here..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div id="curl2python" class="tab-content">
+            <div class="editor-container">
+                <div class="editor-half">
+                    <div class="editor-label">Input cURL</div>
+                    <textarea id="curlInput" placeholder="Paste your cURL command here..."></textarea>
+                </div>
+                <div class="editor-half">
+                    <div class="editor-label">Output Python</div>
+                    <textarea id="pythonOutput" readonly placeholder="Converted Python code will appear here..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div id="headers" class="tab-content">
+            <div class="editor-container">
+                <div class="editor-half">
+                    <div class="editor-label">Input Headers</div>
+                    <div class="format-options">
+                        <button class="format-button" onclick="formatToJSON()">Format as JSON</button>
+                        <button class="format-button" onclick="formatToDictionary()">Format as Dictionary</button>
+                        <button class="format-button" onclick="formatToRaw()">Format as Raw</button>
+                    </div>
+                    <textarea id="headersInput" placeholder="Paste your headers here..."></textarea>
+                </div>
+                <div class="editor-half">
+                    <div class="editor-label">Formatted Headers</div>
+                    <textarea id="headersOutput" readonly placeholder="Formatted headers will appear here..."></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="application/javascript">
+        window.onload = function() {
+            var harToCurl = module.exports;
+            var harInput = document.getElementById('harInput');
+            var curlOutput = document.getElementById('curlOutput');
+
+            harInput.onchange = harInput.onkeyup = function() {
+                var result, harText = harInput.value;
+
+                if (!harText) {
+                    curlOutput.value = '';
+                    return;
+                }
+
+                try {
+                    result = harToCurl(harText);
+                } catch (e) {
+                    curlOutput.value = 'Error parsing HAR: ' + e.message + '.';
+                    if (e.stack) {
+                        curlOutput.value += '\n\n' + e.stack;
+                    }
+                    return;
+                }
+
+                if (Array.isArray(result)) {
+                    result.forEach(function(command, i) {
+                        if (!command) {
+                            command = 'Unable to parse at index ' + i + '.';
+                        }
+
+                        if (i > 0) {
+                            curlOutput.value += '\n\n' + command;
+                        } else {
+                            curlOutput.value = command;
+                        }
+                    });
+                } else {
+                    curlOutput.value = result;
+                }
+            };
+        };
+
+        function switchTab(tabName) {
+            const tabs = document.getElementsByClassName('tab');
+            const tabContents = document.getElementsByClassName('tab-content');
+
+            Array.from(tabs).forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.textContent.toLowerCase().includes(tabName)) {
+                    tab.classList.add('active');
+                }
+            });
+
+            Array.from(tabContents).forEach(content => {
+                content.classList.remove('active');
+                if (content.id === tabName) {
+                    content.classList.add('active');
+                }
+            });
+        }
+
+        function parseHeaders(headerText) {
+            const lines = headerText.split('\n').filter(line => line.trim());
+            const headers = {};
+
+            lines.forEach(line => {
+                const [key, ...values] = line.split(':').map(part => part.trim());
+                if (key && values.length) {
+                    headers[key] = values.join(':');
+                }
+            });
+
+            return headers;
+        }
+
+        function formatToJSON() {
+            const headerText = document.getElementById('headersInput').value;
+            try {
+                const headers = parseHeaders(headerText);
+                document.getElementById('headersOutput').value = JSON.stringify(headers, null, 2);
+            } catch (e) {
+                document.getElementById('headersOutput').value = 'Error parsing headers: ' + e.message;
+            }
+        }
+
+        function formatToDictionary() {
+            const headerText = document.getElementById('headersInput').value;
+            try {
+                const headers = parseHeaders(headerText);
+                const dictFormat = Object.entries(headers)
+                    .map(([key, value]) => `'${key}': '${value}'`)
+                    .join(',\n');
+                document.getElementById('headersOutput').value = `{\n${dictFormat}\n}`;
+            } catch (e) {
+                document.getElementById('headersOutput').value = 'Error parsing headers: ' + e.message;
+            }
+        }
+
+        function formatToRaw() {
+            const headerText = document.getElementById('headersInput').value;
+            try {
+                const headers = parseHeaders(headerText);
+                const rawFormat = Object.entries(headers)
+                    .map(([key, value]) => `${key}: ${value}`)
+                    .join('\n');
+                document.getElementById('headersOutput').value = rawFormat;
+            } catch (e) {
+                document.getElementById('headersOutput').value = 'Error parsing headers: ' + e.message;
+            }
+        }
+    </script>
+</body>
+</html>
