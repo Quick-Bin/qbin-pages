@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<meta name="format-detection" content="email=no">
+<meta name="format-detection" content="telephone=no">
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<meta name="author" content="Jack.Chan">
+<title>在线拼图 - 拼接图片 - 合并长图 - 免费拼图- Combine images Online with HTML5 canvas, Stitch, Merge</title>
+<meta name="description" content="在线拼图, 拼接长图, 免费拼图, 合并长图, 长图生成器, 合并图片, 长图, 拼接图片, 合并图片, 压缩图片, Merge images, Combine image, Stitch images, Compress images, canvas, html, js, online, for mac, windows, 不上传、不留存、不扫描、不识别, 100%安全">
+<meta name="keywords" content="在线拼图, 拼接长图, 免费拼图, 长图生成器, 合并长图, 合并图片, 长图, 拼接图片, 合并图片, 压缩图片, Merge images, Combine image, Stitch images, Compress images, canvas, html, js, online, for mac, windows, 不上传, 不留存, 不扫描, 不识别, 100%安全">
+<style>
+html,
+body{
+	margin:0;
+	padding:0;
+}
+html{ 
+	background-color: rgb(14, 14, 14);
+	background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDY0IDY0Ij4KICA8ZGVmcz4KICAgIDxzdHlsZT4KICAgICAgLmNscy0xIHsKICAgICAgICBmaWxsOiAjMzAzMDMwOwogICAgICB9CgogICAgICAuY2xzLTIgewogICAgICAgIGZpbGw6ICMyMDIwMjA7CiAgICAgIH0KICAgIDwvc3R5bGU+CiAgPC9kZWZzPgogIDxyZWN0IGlkPSJsdCIgY2xhc3M9ImNscy0xIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiLz4KICA8cmVjdCBpZD0icmIiIGNsYXNzPSJjbHMtMSIgeD0iMzIiIHk9IjMyIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiLz4KICA8cmVjdCBpZD0ibGIiIGNsYXNzPSJjbHMtMiIgeT0iMzIiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIvPgogIDxyZWN0IGlkPSJydCIgY2xhc3M9ImNscy0yIiB4PSIzMiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIi8+Cjwvc3ZnPgo=);
+    background-attachment: fixed;
+}
+body,
+button{
+	font-size:16px;
+}
+body{
+	color:#fff;
+}
+html,
+body,
+body *{
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	-webkit-user-drag: none;
+	user-select: none;
+}
+
+.droper{
+	position:fixed;
+	top:10px;
+	right:10px;
+	bottom:10px;
+	left:10px;
+	z-index:99999;
+	outline:10px #000 solid;
+	border:2px #0f87dc dashed;
+	border-radius:10px;
+	background-color:rgba(255,255,255,.35);
+	display:none;
+}
+.droper:before{
+	content:attr(data-text);
+	display:block;
+	font-style:italic;
+	font-size:26px;
+	color:#0f87dc;
+	width:300px;
+	height:50px;
+	text-align:center;
+	position:absolute;
+	top:50%;
+	left:50%;
+	margin-top:-25px;
+	margin-left:-150px;
+}
+.droper.active{
+	display:block;
+}
+
+.wrapper{
+	padding:30px;
+}
+
+.form-field-result{
+	padding-bottom: 120px;
+}
+.form-field-result a{
+	color:#fff;
+	font-size:18px;
+	font-weight:600;
+}
+.form-field-result img{
+	max-width:100%;
+	display:inline-block;
+}
+
+.title{
+	display:none;
+}
+
+.form-group{
+	clear:both;
+	padding-bottom:15px;
+}
+.form-group:after{
+	content:"\20";
+	clear:both;
+	display:block;
+	width:0;
+	height:0;
+}
+.form-group .form-label,
+.form-group .form-field{
+	min-height:28px;
+}
+.form-group .form-label{
+	float:left;
+	width:60px;
+	padding-right:10px;
+}
+.form-group .form-field{
+	margin-left:60px;
+}
+.form-group .form-field label{
+	display: inline-block;
+	word-break: keep-all;
+    white-space: nowrap;
+    padding: 2px;
+}
+.btn{
+	color: #333;
+	position:relative;
+	display:inline-block;
+	vertical-align:middle;
+	background-color:#fff;
+	border-radius:5px;
+	padding:10px 25px;
+	border:1px #eee solid;
+	cursor:pointer;
+}
+.btn:hover{
+	background-color:#eee;
+}
+.btn:active{
+	background-color:#ccc;
+}
+.btn.btn-choose{
+	padding-left: 15px;
+	padding-right: 15px;
+	color: #fff;
+	background: rgba(40, 120, 255, 1);
+}
+.btn.btn-choose:hover{
+	color: #fff;
+	background: rgba(40, 120, 255, 0.85);
+}
+.btn.btn-choose:active{
+	color: #fff;
+	background: rgba(40, 120, 255, 0.65);
+}
+
+.btn-add-file{
+	position:relative;
+	display:inline-block;
+	overflow:hidden;
+}
+.btn-add-file .btn{
+	padding:10px 23px;
+}
+
+.btn-add-file input[type="file"]{
+	position:absolute;
+	top:-10px;
+	left:-10px;
+	bottom:-10px;
+	z-index:3;
+	cursor:pointer;
+	font-size:99px;
+	opacity: 0;
+}
+
+.list-files{
+	margin: 0 0 20px 0;
+	display:block;
+}
+.list-files li{
+	margin-bottom:5px;
+	padding: 5px;
+	border-radius: 3px;
+}
+.list-files li + li{
+	
+}
+.list-files li:hover{
+	background-color: rgba(255,255,255, 0.15);
+}
+
+.text-filename,
+.icon-action{
+	display: inline-block;
+	vertical-align: middle;
+}
+.text-filename{
+	word-break: keep-all;
+    white-space: nowrap;
+}
+
+.icon-action{
+	/*display: none;*/
+	width: 24px;
+	height: 24px;
+	margin-right: 10px;
+	border-radius: 3px;
+	position: relative;
+	cursor: pointer;
+}
+.icon-action:hover{
+	background-color: #03a9f4;
+}
+
+.icon-remove{
+
+}
+.icon-remove:hover{
+	background-color: #f44336;
+}
+.icon-remove:before,
+.icon-remove:after{
+	content: "\20";
+	display: block;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 16px;
+	height: 2px;
+	margin-top: -1px;
+	margin-left: -8px;
+	background-color: #fff;
+}
+.icon-remove:before{
+	transform: rotate(45deg);
+}
+.icon-remove:after{
+	transform: rotate(-45deg);
+}
+
+.icon-move:hover{
+	background-color: #4caf50;
+}
+.icon-move:before{
+	content: "\20";
+	display: block;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 10px;
+	height: 10px;
+	border-style: solid;
+	border-color: #fff;
+	transform: rotate(-45deg);
+	margin-left: -6px;
+}
+.icon-move-up:before{
+	margin-top: -3px;
+	border-width: 2px 2px 0 0;
+}
+.icon-move-down:before{
+	margin-top: -9px;
+	border-width: 0 0 2px 2px;
+}
+
+</style>
+</head>
+<body id="body">
+<div class="wrapper">
+	<h2>
+		<span style="margin-right: 10px;">拼接图片/合并长图</span>
+		<small style="word-break: keep-all;white-space: nowrap;font-size: 16px;">Combine images Online</small>
+	</h2>
+	<p>不上传、不留存、不扫描、不识别, 100%安全</p>
+	<h3 style="font-size: 0;">在线拼图, 拼接长图, 长图生成器, 合并长图，合并图片, 长图, 拼接图片, 合并图片, 压缩图片, Merge images, Combine image, Stitch images, Compress images, canvas, html, js, online, for mac, windows</h3>
+	<div>
+		<h3 class="title">在线拼图, 拼接长图, 长图生成器, 合并图片, 长图, 拼接图片, 合并图片, 压缩图片, Stitch images with HTML5 canvas, for Windows, for Mac</h3>
+		<form name="form-combine" id="form-combine" onsubmit="return onCombine()">
+			<div class="form-group">
+				<label class="form-label">模式</label>	
+				<div class="form-field">
+					<label><input type="radio" name="orientation" checked="checked" value="vertically">纵向(垂直)</label>&nbsp;&nbsp;&nbsp;
+					<label><input type="radio" name="orientation" value="horizontally">横向(水平)</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="form-label">格式</label>	
+				<div class="form-field">
+					<label><input type="radio" name="mimetype" onclick="change(this, 'mimetype')" checked="checked" value="image/jpeg">JPEG</label>&nbsp;&nbsp;&nbsp;
+					<label><input type="radio" name="mimetype" onclick="change(this, 'mimetype')" value="image/png">PNG</label>
+				</div>
+			</div>
+			<div class="form-group" id="form-group-quality">
+				<label class="form-label">质量</label>	
+				<div class="form-field">
+					<label><input type="radio" name="quality" value="0.92">最佳</label>&nbsp;&nbsp;&nbsp;
+					<label><input type="radio" name="quality" checked="checked" value="0.8">非常高</label>&nbsp;&nbsp;&nbsp;
+					<label><input type="radio" name="quality" value="0.65">高</label>&nbsp;&nbsp;&nbsp;
+					<label><input type="radio" name="quality" value="0.46">中</label>&nbsp;&nbsp;&nbsp;
+					<label><input type="radio" name="quality" value="0.35">低</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="form-label">文件</label>	
+				<div class="form-field">
+					<ol class="list-files" id="list-files"></ol>
+					<p>
+						<button type="button" id="btn-choose" class="btn btn-choose">+&nbsp;选择&nbsp;/&nbsp;拖拽&nbsp;/&nbsp;粘贴&nbsp;文件至此</button>
+					</p>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="form-label">&nbsp;</label>
+				<div class="form-field">	
+					<button type="submit" class="btn" id="btn-combine">合并</button>&nbsp;&nbsp;&nbsp;
+					<button type="reset" class="btn" id="btn-reset">重置</button>
+				</div>
+			</div>
+			<div class="form-group" id="result"></div>
+		</form>
+	</div>
+	
+	<h3 class="title">在线拼接图片, Merge images with HTML5 canvas, for Mac, for Windows</h3>
+	
+</div>
+
+<div class="droper" id="droper" data-text="将文件拖放到这里"></div>
+
+<script>
+var IMAGES = [];
+var $form = document.querySelector('#form-combine');
+var $btnChoose = document.querySelector('#btn-choose');
+var $btnCombine = document.querySelector('#btn-combine');
+var $btnReset = document.querySelector('#btn-reset');
+var $list = document.querySelector('#list-files');
+var $result = document.querySelector('#result');
+var $droper = document.querySelector('#droper');
+
+
+function delegateEvent(element, event, arguments, selector, eventHandler) {
+	if (event.target) {
+		var selectorTagName = '';
+		if (typeof(selector) === 'object' && selector.length === undefined) {
+			selectorTagName = selector.tagName.toLowerCase();
+			if (selector.getAttribute('id')) {
+				selector = '#'+ selector.getAttribute('id');
+			} else if (selector.getAttribute('class')) {
+				var selector = selector.getAttribute('class').split(' ')[0];
+				selector = selector ? '.'+ selector : null;
+			}
+			selector = selector || selectorTagName;
+		}
+		if (selector && typeof(selector) === 'string') {
+			var ROOT_SELECTORS = {
+				'document': 1,
+				'html': 1,
+				'head': 1,
+				'body': 1
+			};
+			selectorTagName = document.querySelector(selector).tagName.toLowerCase();
+			if (ROOT_SELECTORS[selectorTagName]) {
+				eventHandler.apply(element, arguments);
+			} else {
+				var $target = event.target.cloneNode();
+				$target.innerHTML = '';
+				var $fragment = document.createDocumentFragment();
+				$fragment.appendChild($target);
+				if ($fragment.querySelector(selector)) {
+					eventHandler.apply(event.target, arguments);
+				}
+			}
+		}
+	}
+}
+function addEvent(elements, eventType, selector, eventHandler) {
+	if (elements) {
+		if (window.Window || (typeof(elements) === 'object' && elements.length === undefined)) {
+			elements = [elements];
+		}
+		if (elements.length && eventType && selector) {
+			for (var i = 0; i < elements.length; i++) {
+				(function(el) {
+					if (typeof(selector) === 'function') {
+						el.addEventListener(eventType, selector);
+					} else {
+						if (typeof(eventHandler) === 'function') {
+							el.addEventListener(eventType, function(event) {
+								delegateEvent(this, event, arguments, selector, eventHandler);
+							}, false);
+						}
+					}
+				})(elements[i]);
+			}
+		}
+	}
+}
+function removeEvent(elements, eventType, selector, eventHandler) {
+	if (elements) {
+		if (window.Window || (typeof(elements) === 'object' && elements.length === undefined)) {
+			elements = [elements];
+		}
+		if (elements.length && eventType && selector) {
+			for (var i = 0; i < elements.length; i++) {
+				(function(el) {
+					if (typeof(selector) === 'function') {
+						el.removeEventListener(eventType, selector, false);
+					} else {
+						if (typeof(eventHandler) === 'function') {
+							el.removeEventListener(eventType, function(event) {
+								delegateEvent(this, event, arguments, selector, eventHandler);
+							}, false);
+						}
+					}
+				})(elements[i]);
+			}
+		}
+	}
+}
+
+var PROTOTYPES = [Window, HTMLDocument, HTMLHeadElement, HTMLBodyElement, HTMLElement, HTMLAllCollection, HTMLCollection, NodeList];
+for (var i = 0; i < PROTOTYPES.length; i++) {
+	(function(prop) {
+		if (prop === Window) {
+			prop.prototype.on = prop.prototype.addEventListener;
+			prop.prototype.off = prop.prototype.removeEventListener;
+		} else {
+			prop.prototype.on = function(eventType, selector, eventHandler) {
+				addEvent(this, eventType, selector, eventHandler);
+			}
+			prop.prototype.off = function(eventType, selector, eventHandler) {
+				removeEvent(this, eventType, selector, eventHandler);
+			}
+		}
+	})(PROTOTYPES[i]);
+}
+
+
+document.on('click', '.form-label', function(e) {
+ 	console.log('@', e.target);
+ 	return false
+});
+
+$list.on('click', '.icon-action', function(e) {
+	e.stopPropagation();
+	var ACTIONS = {
+		'remove': 1,
+		'move-up': 1,
+		'move-down': 1
+	}
+	var action = this.dataset.action || '';
+	var index = parseInt(this.dataset.index || -1);
+	var nextIndex = -1;
+	if (ACTIONS[action] && index > -1) {
+		switch (action) {
+			case 'remove':
+				if (confirm('Are you sure ?')) {
+					if (IMAGES[index]) {
+						IMAGES.splice(index, 1);
+					}
+				}
+				break;
+			case 'move-up':
+				nextIndex = index - 1;
+				nextIndex = nextIndex < 0 ? IMAGES.length - 1 : nextIndex;
+				IMAGES[index] = IMAGES.splice(nextIndex, 1, IMAGES[index])[0];
+				break;
+			case 'move-down':
+				nextIndex = index + 1;
+				nextIndex = nextIndex > IMAGES.length - 1 ? 0 : nextIndex;
+				IMAGES[index] = IMAGES.splice(nextIndex, 1, IMAGES[index])[0];
+				break;
+		}
+		renderImagesList();
+	}
+});
+
+/*window.on('resize', function(e) {
+	console.log('on.resize', e);
+});*/
+
+function renderImagesList() {
+	var html = [];
+	for (var i = 0; i < IMAGES.length; i++) {
+		html.push('<li>');
+		html.push('<i class="icon-action icon-remove" title="移除" data-index="'+ i +'" data-action="remove"></i>');
+		html.push('<i class="icon-action icon-move icon-move-up" title="上移" data-index="'+ i +'" data-action="move-up"></i>');
+		html.push('<i class="icon-action icon-move icon-move-down" title="下移" data-index="'+ i +'" data-action="move-down"></i>');
+		html.push('<span class="text-filename">'+ IMAGES[i].fileInfo.name +'</span>');
+		html.push('</li>');
+	}
+	$list.innerHTML = html.join('');
+}
+
+function loadImages(files, callback) {
+	callback = callback || function(file, image) {
+		renderImagesList();
+	};
+
+	files = Array.prototype.slice.call(files || []);
+	if (files.length) {
+		var loader = function(file, callback) {
+			if (files.length) {
+				var image = new Image();
+				var reader = new FileReader();
+				reader.onload = function(e) {
+					image.onload = function(){
+						this.fileInfo = {
+							lastModified: file.lastModified,
+							lastModifiedDate: file.lastModifiedDate,
+							name: file.name,
+							size: file.size,
+							type: file.type,
+							webkitRelativePath: file.webkitRelativePath
+						};
+						IMAGES.push(this);
+						files.splice(0, 1);
+						image = reader = undefined;
+						if (callback && typeof(callback) === 'function') {
+							callback(file, this);
+						}
+						loader(files[0], callback);
+					}
+					image.src = e.target.result;
+				}
+				reader.readAsDataURL(file);
+			} else {
+				// onCombine();
+			}
+		}
+		loader(files[0], callback);
+	} else {
+		alert('未选择图片文件');
+	}
+}
+
+function SUM(v1, v2, v3) {
+	var args = Array.prototype.slice.call(arguments);
+	return args.reduce((acc, val) => parseInt(acc) + parseInt(val), 0);
+}
+
+function MAX(v1, v2, v3) {
+	var args = Array.prototype.slice.call(arguments);
+	return args && args.length && args[0]!==undefined ? Math.max.apply(window, args) : 0;
+}
+
+function change(target, key) {
+	if (target && key) {
+		if (key == 'mimetype') {
+			var $groupItem = document.querySelector('#form-group-quality');
+			if (target.value == 'image/jpeg') {
+				$groupItem.style.display = 'block';
+			} else {
+				$groupItem.style.display = 'none';
+			}
+		}
+	}
+}
+
+function onCombine() {
+	if (IMAGES.length) {
+		$btnCombine.innerText = '处理中...';
+		var orientation = document.querySelector('input[name="orientation"]:checked').value;
+		var mimetype = document.querySelector('input[name="mimetype"]:checked').value;
+		var quality = document.querySelector('input[name="quality"]:checked').value;
+		var canvasWidth = 0;
+		var canvasHeight = 0;
+		if (orientation == 'vertically') {
+			canvasWidth = MAX.apply(window, IMAGES.map(function(img){
+				return parseInt(img.width);
+			}));
+			canvasHeight = SUM.apply(window, IMAGES.map(function(img){
+				return parseInt(img.height);
+			}));
+		} else {
+			canvasWidth = SUM.apply(window, IMAGES.map(function(img){
+				return parseInt(img.width);
+			}));
+			canvasHeight = MAX.apply(window, IMAGES.map(function(img){
+				return parseInt(img.height);
+			}));
+		}
+		// console.log('canvasWidth: '+ canvasWidth +';canvasHeight: '+ canvasHeight);
+		
+		var canvas = document.createElement('canvas');
+		canvas.width = canvasWidth;
+	    canvas.height = canvasHeight;
+		var offsetX = 0;
+		var offsetY = 0;
+		var context = canvas.getContext('2d');
+		var drawImage = function(img) {
+			context.drawImage(img, offsetX, offsetY, img.width, img.height);
+			if (orientation == 'vertically') {
+				offsetY = offsetY + parseInt(img.height);
+			} else {
+				offsetX = offsetX + parseInt(img.width);
+			}
+		}
+
+		var fileName = 'pintu-fulicat.com-'+ (new Date()).getTime();
+		if (mimetype == 'image/jpeg') {
+			context.fillStyle = '#FFFFFF';
+			context.fillRect(0, 0, canvas.width, canvas.height);
+			quality = parseFloat(quality);
+			fileName+= '.jpg';
+		} else {
+			quality = undefined;
+			fileName+= '.png';
+		}
+		IMAGES.forEach(function(img) {
+			drawImage(img);
+		});
+
+		// var dataURL = canvas.toDataURL('image/png');
+		var dataURL = canvas.toDataURL(mimetype, quality);
+		// console.log(dataURL);
+
+		// quality: 0.8
+		canvas.toBlob(function(blob){
+			var blobURL = URL.createObjectURL(blob);
+			// var blobFile = new File([blob], fileName, { type: mimetype });
+			// var blobFileURL = URL.createObjectURL(blobFile)
+			// console.log(blobFileURL);
+			var html = [];
+			html.push('<label class="form-label">结果</label>');
+			html.push('<div class="form-field form-field-result">');
+			html.push('<p style="padding: 10px 0;">');
+			html.push('<a href="'+ blobURL +'" download="'+ fileName +'">下载</a>');
+			// html.push('&nbsp;&nbsp;&nbsp;');
+			html.push('<a style="margin-left: 30px;" target="_blank" href="'+ blobURL +'">新窗口打开</a>');
+			html.push('</p>');
+
+			html.push('<p style="padding: 10px 0;">');
+			html.push('<a href="'+ dataURL +'" download="'+ fileName +'">下载2</a>');
+			html.push('</p>');
+
+			/*html.push('<p style="padding: 10px 0;">');
+			html.push('<a href="'+ blobFileURL +'" download="'+ fileName +'">下载3</a>');
+			html.push('</p>');*/
+
+			html.push('<p style="padding: 10px 0;">');
+			html.push('<img src="'+ blobURL +'">');
+			html.push('</p>');
+			html.push('</div>');
+			// $result.innerHTML = '<label class="form-label">结果</label><div class="form-field form-field-result"><p><a href="'+ blobURL +'" download="'+ fileName +'">下载</a>&nbsp;&nbsp;&nbsp;<a target="_blank" href="'+ blobURL +'">新窗口打开</a></p><p><img src="'+ blobURL +'"></p></div>';
+			$result.innerHTML = html.join('');
+			canvas = context = undefined;
+			$btnCombine.innerText = '合并';
+			// URL.revokeObjectURL(blobURL);
+		}, mimetype, quality);
+	} else {
+		alert('请先添加图片文件');
+	}
+	return false;
+}
+
+$btnChoose.addEventListener('click', function(e) {
+	var $input = document.createElement('input');
+	$input.setAttribute('type', 'file');
+	$input.setAttribute('name', 'file');
+	$input.setAttribute('accept', 'image/*');
+	$input.setAttribute('multiple', 'multiple');
+	$input.addEventListener('change', function(evt) {
+		loadImages(evt.target.files);
+	}, false);
+	$input.click();
+}, false);
+
+
+$btnReset.addEventListener('click', function(e) {
+	IMAGES = [];
+	$list.innerHTML = '';
+	$result.innerHTML = '';
+}, false);
+
+document.addEventListener('dragleave', function(e) {
+	e.preventDefault();
+}, false);
+document.addEventListener('drop', function(e) {
+	e.preventDefault();
+	$droper.classList.remove('active');
+}, false);
+document.addEventListener('dragenter', function(e) {
+	e.preventDefault();
+	$droper.classList.add('active');
+}, false);
+document.addEventListener('dragover', function(e) {
+	e.preventDefault();
+	$droper.classList.add('active');
+}, false);
+
+
+$droper.addEventListener('drop', function(e) {
+	e.preventDefault();
+	if (e.dataTransfer && e.dataTransfer.files) {
+		loadImages(e.dataTransfer.files);
+	}
+	$droper.classList.remove('active');
+});
+
+window.addEventListener('paste', function(e) {
+	var items = event.clipboardData.items;
+	var files = [];
+	var tmp;
+	for (var i = 0; i < items.length; i++) {
+		tmp = items[i];
+		if (tmp.kind === 'file' && tmp.type) {
+			tmp = tmp.getAsFile();
+			if (tmp) {
+				files.push(tmp);
+			}
+		}
+	}
+	tmp = undefined;
+	loadImages(files);
+});
+</script>
+</body>
+</html>
