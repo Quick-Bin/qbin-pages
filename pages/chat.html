@@ -1896,17 +1896,24 @@
                     state: () => ({
                         url: [
                             "https://api.openai.com",
-                            "http://127.0.0.1",
-                            "https://api.deepinfra.com",
                             "https://api.deepseek.com",
+                            "https://api.anthropic.com"
+                            "http://localhost",
                         ],
                         path: [
                             "/chat/completions",
                             "/v1/chat/completions",
                             "/v1/openai/chat/completions",
-                            "/openai/v1/chat/completions"],
+                            "/openai/v1/chat/completions",
+                            "/v1/responses",
+                            "/v1/messages",
+                        ],
                         model: [
+                            "claude-3-7-sonnet-20250219",
                             "gpt-4.1",
+                            "o3",
+                            "o4-mini",
+                            "o1-pro",
                         ],
                         authPrefix: ["Bearer", "Base", "Token"],
                         max_tokens_type: ["max_tokens", "max_completion_tokens", "max_new_tokens"],
@@ -1933,7 +1940,7 @@
                         apiKey: "",
                         url: "https://api.openai.com",
                         path: "/v1/chat/completions",
-                        model: "meta-llama/Llama-3.3-70B-Instruct",
+                        model: "gpt-4.1",
                         authPrefix: "Bearer",
                         contentType: "application/json",
                         max_tokens_type: "max_tokens",
