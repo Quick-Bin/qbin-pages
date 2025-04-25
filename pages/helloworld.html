@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en" translate="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="google" content="notranslate">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'">
+  <title>Hello World</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+    }
+    canvas {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+    .loading {
+      color: white;
+      font-size: 24px;
+      text-align: center;
+      position: absolute;
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+  <div id="loading" class="loading">Loading...</div>
+  <canvas id="canvas"></canvas>
+  <script>
+  (function(){
+    // 创建加载提示
+    const loadingElement = document.getElementById('loading');
+  
+    // 获取Canvas元素
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d", {alpha: false});
+  
+    // 鼠标/触摸坐标
+    let mouse = {
+      x: 0,
+      y: 0,
+      radius: 80,  // 增大影响范围
+      isActive: false
+    };
+  
+    // 调整canvas大小
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+  
+    resizeCanvas();
+  
+    // 粒子颜色数组
+    const particleColors = [
+      '#FF3F8E', '#04C2C9', '#2E55C1', '#FFDD00', '#00C9B1',
+      '#FB7A8D', '#88DDFF', '#B0FF92', '#FF9F59', '#FFCA3A'
+    ];
+  
+    // 粒子类
+    class Particle {
+      constructor(targetX, targetY) {
+        this.reset(targetX, targetY);
+        // 随机分配颜色
+        this.color = particleColors[Math.floor(Math.random() * particleColors.length)];
+      }
+    
+      reset(targetX, targetY) {
+        // 从屏幕边缘随机位置生成粒子
+        const edge = Math.floor(Math.random() * 4);
+        switch(edge) {
+          case 0: // 上边
+            this.x = Math.random() * canvas.width;
+            this.y = -10;
+            break;
+          case 1: // 右边
+            this.x = canvas.width + 10;
+            this.y = Math.random() * canvas.height;
+            break;
+          case 2: // 下边
+            this.x = Math.random() * canvas.width;
+            this.y = canvas.height + 10;
+            break;
+          case 3: // 左边
+            this.x = -10;
+            this.y = Math.random() * canvas.height;
+            break;
+        }
+      
+        this.targetX = targetX;
+        this.targetY = targetY;
+        this.originalX = targetX;
+        this.originalY = targetY;
+      
+        // 随机化属性
+        this.speed = Math.random() * 3 + 2;
+        this.size = Math.random() * 2.5 + 1;
+        this.arrived = false;
+      
+        // 物理属性
+        this.velocityX = 0;
+        this.velocityY = 0;
+        this.friction = 0.85;
+        this.returnForce = 0.08;
+      
+        // 添加一些随机性，让粒子看起来更自然
+        this.wobble = Math.random() * 2 - 1;
+        this.wobbleSpeed = Math.random() * 0.1 + 0.05;
+        this.angle = Math.random() * Math.PI * 2;
+      }
+    
+      update() {
+        // 检查粒子是否在屏幕外过远，如果是则忽略更新
+        if(this.x < -50 || this.x > canvas.width + 50 || 
+           this.y < -50 || this.y > canvas.height + 50) {
+          return;
+        }
+      
+        if(this.arrived) {
+          // 鼠标/触摸交互
+          if(mouse.isActive) {
+            const dx = mouse.x - this.x;
+            const dy = mouse.y - this.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+          
+            if(distance < mouse.radius) {
+              // 根据距离计算排斥力
+              const force = (mouse.radius - distance) / mouse.radius;
+              const angle = Math.atan2(dy, dx);
+              const repelX = Math.cos(angle) * force * 5;
+              const repelY = Math.sin(angle) * force * 5;
+            
+              this.velocityX -= repelX;
+              this.velocityY -= repelY;
+            }
+          }
+        
+          // 添加微小的波动效果
+          this.angle += this.wobbleSpeed;
+          const wobbleX = this.wobble * Math.sin(this.angle);
+          const wobbleY = this.wobble * Math.cos(this.angle);
+        
+          // 返回原来位置的力
+          const dx = this.originalX - this.x + wobbleX;
+          const dy = this.originalY - this.y + wobbleY;
+        
+          this.velocityX += dx * this.returnForce;
+          this.velocityY += dy * this.returnForce;
+        
+          // 应用摩擦力
+          this.velocityX *= this.friction;
+          this.velocityY *= this.friction;
+        
+          // 更新位置
+          this.x += this.velocityX;
+          this.y += this.velocityY;
+        } else {
+          // 向目标移动
+          const dx = this.targetX - this.x;
+          const dy = this.targetY - this.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+        
+          if(distance < 5) {
+            this.arrived = true;
+          } else {
+            this.x += (dx / distance) * this.speed;
+            this.y += (dy / distance) * this.speed;
+          }
+        }
+      }
+    
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+      }
+    }
+  
+    // 粒子数组
+    let particles = [];
+  
+    // 获取文字粒子位置
+    function getTextParticles() {
+      // 判断是否是移动设备，以调整文字大小
+      const isMobile = window.innerWidth < 600;
+    
+      // 文字内容 - 移动设备分行显示
+      const textLines = isMobile ? ["Hello", "World"] : ["Hello World"];
+    
+      // 计算合适的字体大小
+      const fontSize = isMobile ? 
+        Math.min(canvas.width/4, canvas.height/6) :
+        Math.min(canvas.width/6, canvas.height/6);
+      
+      // 创建离屏canvas来渲染文字
+      const offscreenCanvas = document.createElement('canvas');
+      const offCtx = offscreenCanvas.getContext('2d');
+    
+      // 计算行高和总高度
+      const lineHeight = fontSize * 1.2;
+      const totalHeight = lineHeight * textLines.length;
+    
+      // 设置字体并测量文字宽度
+      const fontStyle = "bold";
+      const fontSizeValue = fontSize;
+      offCtx.font = fontStyle + " " + fontSizeValue + "px Arial";
+      const maxWidth = Math.max(...textLines.map(line => offCtx.measureText(line).width));
+    
+      // 设置离屏canvas尺寸
+      offscreenCanvas.width = maxWidth;
+      offscreenCanvas.height = totalHeight;
+    
+      // 渲染文字
+      offCtx.font = "bold " + fontSize + "px Arial";
+      offCtx.textBaseline = 'middle';
+      offCtx.textAlign = 'center';
+      offCtx.fillStyle = 'white';
+    
+      textLines.forEach((line, index) => {
+        const yPos = index * lineHeight + offscreenCanvas.height/2 - (textLines.length-1)*lineHeight/2;
+        offCtx.fillText(line, offscreenCanvas.width/2, yPos);
+      });
+    
+      // 获取像素数据
+      const imgData = offCtx.getImageData(0, 0, offscreenCanvas.width, offscreenCanvas.height).data;
+    
+      // 存储有文字的像素点位置
+      const positions = [];
+    
+      // 颗粒度 - 移动设备更少的粒子
+      const granularity = isMobile ? 5 : 4;
+    
+      // 计算起始位置以居中
+      const startX = (canvas.width - offscreenCanvas.width) / 2;
+      const startY = (canvas.height - offscreenCanvas.height) / 2;
+    
+      // 遍历像素数据
+      for(let y = 0; y < offscreenCanvas.height; y += granularity) {
+        for(let x = 0; x < offscreenCanvas.width; x += granularity) {
+          // 获取像素索引
+          const i = (y * offscreenCanvas.width + x) * 4;
+        
+          // 如果是不透明像素
+          if(imgData[i+3] > 128) {
+            positions.push({
+              x: startX + x,
+              y: startY + y
+            });
+          }
+        }
+      }
+    
+      return positions;
+    }
+  
+    // 创建粒子
+    function createParticles() {
+      const positions = getTextParticles();
+      particles = positions.map(pos => new Particle(pos.x, pos.y));
+    
+      // 移除加载提示
+      if(loadingElement) {
+        loadingElement.style.display = 'none';
+      }
+    }
+  
+    // 添加点击效果函数
+    function createClickEffect(x, y) {
+      // 创建爆炸效果
+      for(let i = 0; i < 15; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const distance = Math.random() * 100 + 50;
+        const particle = new Particle(
+          x + Math.cos(angle) * distance,
+          y + Math.sin(angle) * distance
+        );
+        particle.size = Math.random() * 4 + 2;
+        particle.speed = Math.random() * 6 + 4;
+        particles.push(particle);
+      }
+    }
+  
+    // 动画循环
+    function animate() {
+      // 创建淡出效果
+      ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+      // 更新并绘制所有粒子
+      particles.forEach(particle => {
+        particle.update();
+        particle.draw();
+      });
+    
+      // 循环动画
+      requestAnimationFrame(animate);
+    }
+  
+    // 更新鼠标/触摸位置
+    function updateMousePosition(event) {
+      const rect = canvas.getBoundingClientRect();
+    
+      if(event.touches) {
+        mouse.x = event.touches[0].clientX - rect.left;
+        mouse.y = event.touches[0].clientY - rect.top;
+      } else {
+        mouse.x = event.clientX - rect.left;
+        mouse.y = event.clientY - rect.top;
+      }
+    }
+  
+    // 添加事件监听器
+    canvas.addEventListener("mousemove", e => {
+      mouse.isActive = true;
+      updateMousePosition(e);
+    });
+  
+    canvas.addEventListener("mouseleave", () => {
+      mouse.isActive = false;
+      mouse.x = -1000;
+      mouse.y = -1000;
+    });
+  
+    canvas.addEventListener("click", e => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      createClickEffect(x, y);
+    });
+  
+    canvas.addEventListener("touchstart", e => {
+      e.preventDefault();
+      mouse.isActive = true;
+      updateMousePosition(e);
+    }, {passive: false});
+    
+    canvas.addEventListener("touchmove", e => {
+      e.preventDefault();
+      mouse.isActive = true;
+      updateMousePosition(e);
+    }, {passive: false});
+    
+    canvas.addEventListener("touchend", () => {
+      mouse.isActive = false;
+      mouse.x = -1000;
+      mouse.y = -1000;
+    });
+    
+    canvas.addEventListener("touchcancel", () => {
+      mouse.isActive = false;
+      mouse.x = -1000;
+      mouse.y = -1000;
+    });
+    
+    // 窗口大小改变时重设
+    window.addEventListener("resize", () => {
+      resizeCanvas();
+      createParticles();
+    });
+    
+    // 初始化
+    createParticles();
+    animate();
+    
+    // 添加颜色切换效果
+    let colorChangeInterval;
+    
+    function startColorCycle() {
+      let hue = 0;
+      colorChangeInterval = setInterval(() => {
+        hue = (hue + 1) % 360;
+        particles.forEach((particle, index) => {
+          // 让每个粒子的色相稍微偏移，创造彩虹效果
+          const particleHue = (hue + index % 30) % 360;
+          particle.color = "hsl(" + particleHue + ", 100%, 60%)";
+        });
+      }, 50);
+    }
+    
+    // 10秒后开始颜色循环效果
+    setTimeout(startColorCycle, 10000);
+    
+    // 添加文字变换效果
+    const textOptions = ['Hello World', 'Welcome', '你好世界', 'Bonjour', 'こんにちは'];
+    let currentTextIndex = 0;
+    
+    function changeText() {
+      currentTextIndex = (currentTextIndex + 1) % textOptions.length;
+      
+      // 将所有粒子先移到屏幕外
+      particles.forEach(particle => {
+        particle.arrived = false;
+        const angle = Math.random() * Math.PI * 2;
+        particle.x = canvas.width/2 + Math.cos(angle) * canvas.width;
+        particle.y = canvas.height/2 + Math.sin(angle) * canvas.height;
+      });
+      
+      // 创建新的文字布局
+      const positions = getTextParticles();
+      
+      // 更新粒子目标位置
+      positions.forEach((pos, index) => {
+        if (index < particles.length) {
+          particles[index].targetX = pos.x;
+          particles[index].targetY = pos.y;
+          particles[index].originalX = pos.x;
+          particles[index].originalY = pos.y;
+        }
+      });
+    }
+    
+  })();
+  </script>
+</body>
+</html>
