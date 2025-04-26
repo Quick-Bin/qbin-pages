@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather and Time (OpenWeatherMap)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: black;
+            font-family: "Inter", sans-serif;
+            font-variant-numeric: tabular-nums;
+            color: #e0e0e0;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        #info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .time-container {
+            display: flex;
+            align-items: center;
+        }
+        #time {
+            font-size: 4em;
+            font-weight: 600;
+            color: #f5f5f5;
+        }
+        #temperature {
+            font-size: 4em;
+            font-weight: 600;
+        }
+        #date {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin: 5px;
+            color: #dcdcdc;
+        }
+        #city {
+            font-weight: 600;
+            font-size: 1.45em;
+            color: #808080;
+        }
+        #weather {
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+        #hourly {
+            font-size: 1.1em;
+            font-weight: 600;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .hourly-item {
+            display: inline-block;
+            text-align: center;
+            width: 37px;
+            font-weight: 610;
+            margin-right: 10px;
+        }
+        .time-label {
+            color: #808080;
+        }
+        .am-pm {
+            font-size: 0.7em;
+            vertical-align: super;
+            position: relative;
+            top: 3px;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">
+        <div class="time-container">
+            <div id="time">Loading...</div>
+            <div id="date">Loading...</div>
+            <div id="temperature">...</div>
+        </div>
+        <div id="city">...</div>
+        <div id="weather">Loading...</div>
+        <div id="hourly">Loading...</div>
+    </div>
+
+    <script>
+        // API key for OpenWeatherMap
+        var apiKey = 'b0b1989dfa8a23fdff44d80498d7e07d';
+
+        // Manual URL parameter parsing
+        function getUrlParam(name, defaultValue) {
+            var url = window.location.search.substring(1);
+            var params = url.split('&');
+            for (var i = 0; i < params.length; i++) {
+                var pair = params[i].split('=');
+                if (pair[0] === name) return pair[1] || defaultValue;
+            }
+            return defaultValue;
+        }
+
+        var lat = getUrlParam('lat', 37.5665);
+        var lon = getUrlParam('lon', 126.9780);
+        var cityId = getUrlParam('id', 1835848);
+        var timeZone = getUrlParam('tz', 'Asia/Seoul'); // Fixed timezone
+
+        // API URLs
+        var weatherUrl = 'https://api.openweathermap.org/data/2.5/weather?id=' + cityId + '&units=metric&appid=' + apiKey;
+        var forecastUrl = 'https://api.openweathermap.org/data/2.5/forecast?id=' + cityId + '&units=metric&appid=' + apiKey;
+        var airPollutionUrl = 'https://api.openweathermap.org/data/2.5/air_pollution?lat=' + lat + '&lon=' + lon + '&appid=' + apiKey;
+
+        // Log URLs for debugging
+        console.log('Weather URL:', weatherUrl);
+        console.log('Forecast URL:', forecastUrl);
+        console.log('Air Pollution URL:', airPollutionUrl);
+
+        // Function to update the current time
+        function updateTime() {
+            var now = new Date();
+
+            // Time display
+            var timeOptions = {
+                hour: '2-digit', // Display the hour in numeric format
+                minute: '2-digit', // Display the minute in numeric format
+                hour12: true, // Use 12-hour format (AM/PM)
+                timeZone: timeZone
+            };
+            var timeString = now.toLocaleString('en-US', timeOptions); // Format time in English (US)
+
+            // Extract AM/PM and time
+            var ampm = timeString.split(' ')[1]; // Extract AM or PM
+            var timeParts = timeString.split(' ')[0].split(':'); // Split time into hours and minutes
+            var hour = timeParts[0];
+            var minute = timeParts[1];
+
+            // Add leading zero if needed
+            hour = hour.length < 2 ? '0' + hour : hour;
+            minute = minute.length < 2 ? '0' + minute : minute;
+
+            var formattedTime = hour + ':' + minute;
+
+            document.getElementById('time').innerHTML = '<span style="color:#808080; font-size: 0.37em; position: relative; top: -0.57em; vertical-align: sub;"> ' + ampm + '</span>' + formattedTime;
+
+            // Date and day of the week display
+            var dateOptions = {
+                month: 'numeric', // Display the month in numeric format
+                day: 'numeric', // Display the day in numeric format
+                weekday: 'short', // Display the abbreviated weekday name (e.g., Sun, Mon)
+                timeZone: timeZone
+            };
+            var dateString = now.toLocaleString('en-US', dateOptions); // Format date in English (US)
+            var dateParts = dateString.split(','); // Split date and weekday
+            var formattedDate = dateParts[1].trim(); // Extract and trim the date part
+            var weekday = dateParts[0].trim().toUpperCase(); // Extract, trim, and uppercase the weekday part
+
+            document.getElementById('date').innerHTML = formattedDate + '<br>' + weekday;
+        }
+
+        // Function to determine temperature color based on value
+        function getTemperatureColor(temp) {
+            if (temp <= -10) return '#001f3f';
+            if (temp < 0) return '#0077BE';
+            if (temp < 5) return '#1E90FF';
+            if (temp < 10) return '#4682B4';
+            if (temp < 15) return '#20B2AA';
+            if (temp < 20) return '#32CD32';
+            if (temp < 25) return '#FFD700';
+            if (temp < 30) return '#FFA500';
+            if (temp < 35) return '#FF8C00';
+            return '#FF4500';
+        }
+
+        // Function to determine AQI color based on value
+        function getAQIColor(aqi) {
+            switch (aqi) {
+                case 1: return '#009966';
+                case 2: return '#ffde33';
+                case 3: return '#ff9933';
+                case 4: return '#cc0033';
+                case 5: return '#660099';
+                default: return '#7e7e7e';
+            }
+        }
+
+        // Function to fetch data using XMLHttpRequest
+        function fetchData(url, callback, errorCallback) {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        callback(JSON.parse(xhr.responseText));
+                    } else {
+                        errorCallback(xhr.status);
+                    }
+                }
+            };
+            xhr.open('GET', url, true);
+            xhr.send();
+        }
+
+        // Function to update weather information
+        function updateWeather() {
+            fetchData(weatherUrl, function(data) {
+                document.title = data.name + ' Weather and Time (OpenWeatherMap)';
+                var description = data.weather[0].description;
+                var city = data.name.toUpperCase();
+                document.getElementById('city').innerHTML = city + '<span style="color:#e0e0e0"> ' + description.toUpperCase() + '</span>';
+
+                var temp = Math.round(data.main.temp);
+                var feelsLike = Math.round(data.main.feels_like);
+                var humidity = data.main.humidity;
+                var windSpeed = Math.round(data.wind.speed * 10) / 10;
+                var tempColor = getTemperatureColor(temp);
+                var feelsLikeColor = getTemperatureColor(feelsLike);
+
+                fetchData(airPollutionUrl, function(airData) {
+                    var aqi = airData.list[0].main.aqi || 'N/A';
+                    var aqiColor = getAQIColor(aqi);
+                    document.getElementById('temperature').innerHTML = '<span style="color:' + tempColor + '">' + temp + '</span><span style="color:#808080">°</span>';
+                    document.getElementById('weather').innerHTML = '<span style="color:#808080">Feel-like</span> <span style="color:' + feelsLikeColor + '">' + feelsLike + '</span><span style="color:#808080">°</span><span style="color:#808080">, AQI </span><span style="color:' + aqiColor + '">' + aqi + '</span><span style="color:#808080">, Humidity </span>' + humidity + '<span style="color:#808080">%</span>';
+                }, function(error) {
+                    console.error('Air Pollution fetch error:', error);
+                    document.getElementById('weather').innerHTML = '<span class="error">Air Pollution fetch error</span>';
+                });
+            }, function(error) {
+                console.error('Weather fetch error:', error);
+                document.getElementById('temperature').textContent = '--°';
+                document.getElementById('weather').innerHTML = '<span class="error">Weather fetch error</span>';
+            });
+
+            fetchData(forecastUrl, function(forecastData) {
+                var hourlyTimes = '<div class="hourly-times">';
+                var hourlyTemps = '<div class="hourly-temps">';
+
+                for (var i = 0; i < 6; i++) {
+                    var forecast = forecastData.list[i];
+                    var date = new Date(forecast.dt * 1000); // Convert UTC seconds to milliseconds
+
+                    // Format time using toLocaleString for better compatibility
+                    var options = {
+                        hour: 'numeric',
+                        hour12: true,
+                        timeZone: timeZone // Use provided timezone
+                    };
+                    var timeString = date.toLocaleString('en-US', options); // Format in English (US)
+
+                    // Extract hour and AM/PM
+                    var parts = timeString.split(' ');
+                    var hour = parts[0];
+                    var period = parts[1];
+
+                    var temp = Math.round(forecast.main.temp);
+                    var tempColor = getTemperatureColor(temp);
+
+                    hourlyTimes += '<span class="hourly-item time-label">' + hour + '<span class="am-pm">' + period + '</span></span>';
+                    hourlyTemps += '<span class="hourly-item" style="color:' + tempColor + '">' + temp + '<span style="color:#808080">°</span></span>';
+                }
+
+                hourlyTimes += '</div>';
+                hourlyTemps += '</div>';
+                document.getElementById('hourly').innerHTML = hourlyTimes + hourlyTemps;
+            }, function(error) {
+                console.error('Hourly forecast fetch error:', error);
+                document.getElementById('hourly').innerHTML = '<span class="error">Hourly forecast fetch error</span>';
+            });
+        }
+
+        // Initial calls and intervals
+        updateTime();
+        updateWeather();
+        setInterval(updateTime, 20000);
+        setInterval(updateWeather, 600000);
+    </script>
+</body>
+</html>
