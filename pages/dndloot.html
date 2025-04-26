@@ -1,0 +1,1738 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="h-full w-full">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNDLOOT 匿名群聊</title>
+    <meta name="description" content="DNDLOOT是一款安全匿名的群聊工具，适用于临时群聊讨论，话题的加密交流，文件安全传输，无记录无痕迹。">
+    <script type="module" src="https://cdn.jsdelivr.net/gh/Quick-Bin/qbin-pages@main/shared/js/dndloot.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Quick-Bin/qbin-pages@main/shared/css/dndloot.css">
+    <style>
+        *,
+        :before,
+        :after,
+        ::backdrop {
+            --tw-border-spacing-x: 0;
+            --tw-border-spacing-y: 0;
+            --tw-translate-x: 0;
+            --tw-translate-y: 0;
+            --tw-rotate: 0;
+            --tw-skew-x: 0;
+            --tw-skew-y: 0;
+            --tw-scale-x: 1;
+            --tw-scale-y: 1;
+            --tw-pan-x: ;
+            --tw-pan-y: ;
+            --tw-pinch-zoom: ;
+            --tw-scroll-snap-strictness: proximity;
+            --tw-gradient-from-position: ;
+            --tw-gradient-via-position: ;
+            --tw-gradient-to-position: ;
+            --tw-ordinal: ;
+            --tw-slashed-zero: ;
+            --tw-numeric-figure: ;
+            --tw-numeric-spacing: ;
+            --tw-numeric-fraction: ;
+            --tw-ring-inset: ;
+            --tw-ring-offset-width: 0px;
+            --tw-ring-offset-color: #fff;
+            --tw-ring-color: #3b82f680;
+            --tw-ring-offset-shadow: 0 0 #0000;
+            --tw-ring-shadow: 0 0 #0000;
+            --tw-shadow: 0 0 #0000;
+            --tw-shadow-colored: 0 0 #0000;
+            --tw-blur: ;
+            --tw-brightness: ;
+            --tw-contrast: ;
+            --tw-grayscale: ;
+            --tw-hue-rotate: ;
+            --tw-invert: ;
+            --tw-saturate: ;
+            --tw-sepia: ;
+            --tw-drop-shadow: ;
+            --tw-backdrop-blur: ;
+            --tw-backdrop-brightness: ;
+            --tw-backdrop-contrast: ;
+            --tw-backdrop-grayscale: ;
+            --tw-backdrop-hue-rotate: ;
+            --tw-backdrop-invert: ;
+            --tw-backdrop-opacity: ;
+            --tw-backdrop-saturate: ;
+            --tw-backdrop-sepia: ;
+            --tw-contain-size: ;
+            --tw-contain-layout: ;
+            --tw-contain-paint: ;
+            --tw-contain-style:
+        }
+
+        *,
+        :after,
+        :before {
+            box-sizing: border-box;
+            border: 0 solid #e5e7eb
+        }
+
+        :after,
+        :before {
+            --tw-content: ""
+        }
+
+        :host,
+        html {
+            -webkit-text-size-adjust: 100%;
+            tab-size: 4;
+            font-feature-settings: normal;
+            font-variation-settings: normal;
+            -webkit-tap-highlight-color: transparent;
+            font-family: ui-sans-serif, system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+            line-height: 1.5
+        }
+
+        body {
+            line-height: inherit;
+            margin: 0
+        }
+
+        hr {
+            height: 0;
+            color: inherit;
+            border-top-width: 1px
+        }
+
+        abbr:where([title]) {
+            -webkit-text-decoration: underline dotted;
+            text-decoration: underline dotted
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-size: inherit;
+            font-weight: inherit
+        }
+
+        a {
+            color: inherit;
+            -webkit-text-decoration: inherit;
+            -webkit-text-decoration: inherit;
+            text-decoration: inherit
+        }
+
+        b,
+        strong {
+            font-weight: bolder
+        }
+
+        code,
+        kbd,
+        pre,
+        samp {
+            font-feature-settings: normal;
+            font-variation-settings: normal;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
+            font-size: 1em
+        }
+
+        small {
+            font-size: 80%
+        }
+
+        sub,
+        sup {
+            vertical-align: baseline;
+            font-size: 75%;
+            line-height: 0;
+            position: relative
+        }
+
+        sub {
+            bottom: -.25em
+        }
+
+        sup {
+            top: -.5em
+        }
+
+        table {
+            text-indent: 0;
+            border-color: inherit;
+            border-collapse: collapse
+        }
+
+        button,
+        input,
+        optgroup,
+        select,
+        textarea {
+            font-feature-settings: inherit;
+            font-variation-settings: inherit;
+            font-family: inherit;
+            font-size: 100%;
+            font-weight: inherit;
+            line-height: inherit;
+            letter-spacing: inherit;
+            color: inherit;
+            margin: 0;
+            padding: 0
+        }
+
+        button,
+        select {
+            text-transform: none
+        }
+
+        button,
+        input:where([type=button]),
+        input:where([type=reset]),
+        input:where([type=submit]) {
+            -webkit-appearance: button;
+            background-color: #0000;
+            background-image: none
+        }
+
+        :-moz-focusring {
+            outline: auto
+        }
+
+        :-moz-ui-invalid {
+            box-shadow: none
+        }
+
+        progress {
+            vertical-align: baseline
+        }
+
+        ::-webkit-inner-spin-button {
+            height: auto
+        }
+
+        ::-webkit-outer-spin-button {
+            height: auto
+        }
+
+        [type=search] {
+            -webkit-appearance: textfield;
+            outline-offset: -2px
+        }
+
+        ::-webkit-search-decoration {
+            -webkit-appearance: none
+        }
+
+        ::-webkit-file-upload-button {
+            -webkit-appearance: button;
+            font: inherit
+        }
+
+        summary {
+            display: list-item
+        }
+
+        blockquote,
+        dd,
+        dl,
+        figure,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        hr,
+        p,
+        pre {
+            margin: 0
+        }
+
+        fieldset {
+            margin: 0;
+            padding: 0
+        }
+
+        legend {
+            padding: 0
+        }
+
+        menu,
+        ol,
+        ul {
+            margin: 0;
+            padding: 0;
+            list-style: none
+        }
+
+        dialog {
+            padding: 0
+        }
+
+        textarea {
+            resize: vertical
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            opacity: 1;
+            color: #9ca3af
+        }
+
+        [role=button],
+        button {
+            cursor: pointer
+        }
+
+        :disabled {
+            cursor: default
+        }
+
+        audio,
+        canvas,
+        embed,
+        iframe,
+        img,
+        object,
+        svg,
+        video {
+            vertical-align: middle;
+            display: block
+        }
+
+        img,
+        video {
+            max-width: 100%;
+            height: auto
+        }
+
+        [hidden]:where(:not([hidden=until-found])) {
+            display: none
+        }
+
+        .fixed {
+            position: fixed
+        }
+
+        .absolute {
+            position: absolute
+        }
+
+        .relative {
+            position: relative
+        }
+
+        .sticky {
+            position: sticky
+        }
+
+        .inset-0 {
+            inset: 0
+        }
+
+        .inset-y-0 {
+            top: 0;
+            bottom: 0
+        }
+
+        .bottom-24 {
+            bottom: 6rem
+        }
+
+        .left-0 {
+            left: 0
+        }
+
+        .left-4 {
+            left: 1rem
+        }
+
+        .right-6 {
+            right: 1.5rem
+        }
+
+        .top-0 {
+            top: 0
+        }
+
+        .top-24 {
+            top: 6rem
+        }
+
+        .z-10 {
+            z-index: 10
+        }
+
+        .z-50 {
+            z-index: 50
+        }
+
+        .col-span-4 {
+            grid-column: span 4/span 4
+        }
+
+        .m-0 {
+            margin: 0
+        }
+
+        .mx-2 {
+            margin-left: .5rem;
+            margin-right: .5rem
+        }
+
+        .mx-4 {
+            margin-left: 1rem;
+            margin-right: 1rem
+        }
+
+        .mx-auto {
+            margin-left: auto;
+            margin-right: auto
+        }
+
+        .mb-10 {
+            margin-bottom: 2.5rem
+        }
+
+        .mb-2 {
+            margin-bottom: .5rem
+        }
+
+        .mb-3 {
+            margin-bottom: .75rem
+        }
+
+        .mb-4 {
+            margin-bottom: 1rem
+        }
+
+        .mb-6 {
+            margin-bottom: 1.5rem
+        }
+
+        .mb-8 {
+            margin-bottom: 2rem
+        }
+
+        .ml-2 {
+            margin-left: .5rem
+        }
+
+        .mr-1 {
+            margin-right: .25rem
+        }
+
+        .mr-2 {
+            margin-right: .5rem
+        }
+
+        .mr-4 {
+            margin-right: 1rem
+        }
+
+        .mt-2 {
+            margin-top: .5rem
+        }
+
+        .mt-4 {
+            margin-top: 1rem
+        }
+
+        .mt-8 {
+            margin-top: 2rem
+        }
+
+        .mb-1 {
+            margin-bottom: .25rem
+        }
+
+        .block {
+            display: block
+        }
+
+        .flex {
+            display: flex
+        }
+
+        .inline-flex {
+            display: inline-flex
+        }
+
+        .grid {
+            display: grid
+        }
+
+        .hidden {
+            display: none
+        }
+
+        .h-6 {
+            height: 1.5rem
+        }
+
+        .h-full {
+            height: 100%
+        }
+
+        .max-h-40 {
+            max-height: 10rem
+        }
+
+        .max-h-60 {
+            max-height: 15rem
+        }
+
+        .max-h-64 {
+            max-height: 16rem
+        }
+
+        .min-h-screen {
+            min-height: 100vh
+        }
+
+        .w-11 {
+            width: 2.75rem
+        }
+
+        .w-6 {
+            width: 1.5rem
+        }
+
+        .w-64 {
+            width: 16rem
+        }
+
+        .w-full {
+            width: 100%
+        }
+
+        .max-w-md {
+            max-width: 28rem
+        }
+
+        .max-w-sm {
+            max-width: 24rem
+        }
+
+        .flex-1 {
+            flex: 1
+        }
+
+        .scale-100 {
+            --tw-scale-x: 1;
+            --tw-scale-y: 1;
+            transform: translate(var(--tw-translate-x), var(--tw-translate-y))rotate(var(--tw-rotate))skewX(var(--tw-skew-x))skewY(var(--tw-skew-y))scaleX(var(--tw-scale-x))scaleY(var(--tw-scale-y))
+        }
+
+        .transform {
+            transform: translate(var(--tw-translate-x), var(--tw-translate-y))rotate(var(--tw-rotate))skewX(var(--tw-skew-x))skewY(var(--tw-skew-y))scaleX(var(--tw-scale-x))scaleY(var(--tw-scale-y))
+        }
+
+        .cursor-pointer {
+            cursor: pointer
+        }
+
+        .resize-none {
+            resize: none
+        }
+
+        .list-disc {
+            list-style-type: disc
+        }
+
+        .grid-cols-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr))
+        }
+
+        .grid-cols-4 {
+            grid-template-columns: repeat(4, minmax(0, 1fr))
+        }
+
+        .grid-cols-8 {
+            grid-template-columns: repeat(8, minmax(0, 1fr))
+        }
+
+        .grid-cols-5 {
+            grid-template-columns: repeat(5, minmax(0, 1fr))
+        }
+
+        .flex-col {
+            flex-direction: column
+        }
+
+        .items-end {
+            align-items: flex-end
+        }
+
+        .items-center {
+            align-items: center
+        }
+
+        .justify-end {
+            justify-content: flex-end
+        }
+
+        .justify-center {
+            justify-content: center
+        }
+
+        .justify-between {
+            justify-content: space-between
+        }
+
+        .gap-2 {
+            gap: .5rem
+        }
+
+        .gap-4 {
+            gap: 1rem
+        }
+
+        .space-x-2>:not([hidden])~:not([hidden]) {
+            --tw-space-x-reverse: 0;
+            margin-right: calc(.5rem*var(--tw-space-x-reverse));
+            margin-left: calc(.5rem*calc(1 - var(--tw-space-x-reverse)))
+        }
+
+        .space-x-4>:not([hidden])~:not([hidden]) {
+            --tw-space-x-reverse: 0;
+            margin-right: calc(1rem*var(--tw-space-x-reverse));
+            margin-left: calc(1rem*calc(1 - var(--tw-space-x-reverse)))
+        }
+
+        .space-y-2>:not([hidden])~:not([hidden]) {
+            --tw-space-y-reverse: 0;
+            margin-top: calc(.5rem*calc(1 - var(--tw-space-y-reverse)));
+            margin-bottom: calc(.5rem*var(--tw-space-y-reverse))
+        }
+
+        .space-y-4>:not([hidden])~:not([hidden]) {
+            --tw-space-y-reverse: 0;
+            margin-top: calc(1rem*calc(1 - var(--tw-space-y-reverse)));
+            margin-bottom: calc(1rem*var(--tw-space-y-reverse))
+        }
+
+        .divide-y>:not([hidden])~:not([hidden]) {
+            --tw-divide-y-reverse: 0;
+            border-top-width: calc(1px*calc(1 - var(--tw-divide-y-reverse)));
+            border-bottom-width: calc(1px*var(--tw-divide-y-reverse))
+        }
+
+        .divide-gray-200>:not([hidden])~:not([hidden]) {
+            --tw-divide-opacity: 1;
+            border-color: rgb(229 231 235/var(--tw-divide-opacity, 1))
+        }
+
+        .overflow-hidden {
+            overflow: hidden
+        }
+
+        .overflow-y-auto {
+            overflow-y: auto
+        }
+
+        .rounded {
+            border-radius: .25rem
+        }
+
+        .rounded-2xl {
+            border-radius: 1rem
+        }
+
+        .rounded-full {
+            border-radius: 9999px
+        }
+
+        .rounded-lg {
+            border-radius: .5rem
+        }
+
+        .rounded-md {
+            border-radius: .375rem
+        }
+
+        .rounded-l-md {
+            border-top-left-radius: .375rem;
+            border-bottom-left-radius: .375rem
+        }
+
+        .rounded-r-md {
+            border-top-right-radius: .375rem;
+            border-bottom-right-radius: .375rem
+        }
+
+        .border {
+            border-width: 1px
+        }
+
+        .border-b {
+            border-bottom-width: 1px
+        }
+
+        .border-t {
+            border-top-width: 1px
+        }
+
+        .border-gray-200 {
+            --tw-border-opacity: 1;
+            border-color: rgb(229 231 235/var(--tw-border-opacity, 1))
+        }
+
+        .border-gray-300 {
+            --tw-border-opacity: 1;
+            border-color: rgb(209 213 219/var(--tw-border-opacity, 1))
+        }
+
+        .bg-black {
+            --tw-bg-opacity: 1;
+            background-color: rgb(0 0 0/var(--tw-bg-opacity, 1))
+        }
+
+        .bg-blue-500 {
+            --tw-bg-opacity: 1;
+            background-color: rgb(59 130 246/var(--tw-bg-opacity, 1))
+        }
+
+        .bg-blue-600 {
+            --tw-bg-opacity: 1;
+            background-color: rgb(37 99 235/var(--tw-bg-opacity, 1))
+        }
+
+        .bg-gray-100 {
+            --tw-bg-opacity: 1;
+            background-color: rgb(243 244 246/var(--tw-bg-opacity, 1))
+        }
+
+        .bg-gray-300 {
+            --tw-bg-opacity: 1;
+            background-color: rgb(209 213 219/var(--tw-bg-opacity, 1))
+        }
+
+        .bg-gray-50 {
+            --tw-bg-opacity: 1;
+            background-color: rgb(249 250 251/var(--tw-bg-opacity, 1))
+        }
+
+        .bg-purple-600 {
+            --tw-bg-opacity: 1;
+            background-color: rgb(147 51 234/var(--tw-bg-opacity, 1))
+        }
+
+        .bg-transparent {
+            background-color: #0000
+        }
+
+        .bg-white {
+            --tw-bg-opacity: 1;
+            background-color: rgb(255 255 255/var(--tw-bg-opacity, 1))
+        }
+
+        .bg-opacity-50 {
+            --tw-bg-opacity: .5
+        }
+
+        .bg-opacity-75 {
+            --tw-bg-opacity: .75
+        }
+
+        .p-0 {
+            padding: 0
+        }
+
+        .p-2 {
+            padding: .5rem
+        }
+
+        .p-3 {
+            padding: .75rem
+        }
+
+        .p-4 {
+            padding: 1rem
+        }
+
+        .p-6 {
+            padding: 1.5rem
+        }
+
+        .px-2 {
+            padding-left: .5rem;
+            padding-right: .5rem
+        }
+
+        .px-3 {
+            padding-left: .75rem;
+            padding-right: .75rem
+        }
+
+        .px-4 {
+            padding-left: 1rem;
+            padding-right: 1rem
+        }
+
+        .py-1 {
+            padding-top: .25rem;
+            padding-bottom: .25rem
+        }
+
+        .py-2 {
+            padding-top: .5rem;
+            padding-bottom: .5rem
+        }
+
+        .py-3 {
+            padding-top: .75rem;
+            padding-bottom: .75rem
+        }
+
+        .py-4 {
+            padding-top: 1rem;
+            padding-bottom: 1rem
+        }
+
+        .pl-5 {
+            padding-left: 1.25rem
+        }
+
+        .pt-4 {
+            padding-top: 1rem
+        }
+
+        .pt-8 {
+            padding-top: 2rem
+        }
+
+        .text-center {
+            text-align: center
+        }
+
+        .text-4xl {
+            font-size: 2.25rem;
+            line-height: 2.5rem
+        }
+
+        .text-lg {
+            font-size: 1.125rem;
+            line-height: 1.75rem
+        }
+
+        .text-sm {
+            font-size: .875rem;
+            line-height: 1.25rem
+        }
+
+        .text-xl {
+            font-size: 1.25rem;
+            line-height: 1.75rem
+        }
+
+        .text-xs {
+            font-size: .75rem;
+            line-height: 1rem
+        }
+
+        .font-bold {
+            font-weight: 700
+        }
+
+        .font-medium {
+            font-weight: 500
+        }
+
+        .text-blue-500 {
+            --tw-text-opacity: 1;
+            color: rgb(59 130 246/var(--tw-text-opacity, 1))
+        }
+
+        .text-gray-500 {
+            --tw-text-opacity: 1;
+            color: rgb(107 114 128/var(--tw-text-opacity, 1))
+        }
+
+        .text-gray-600 {
+            --tw-text-opacity: 1;
+            color: rgb(75 85 99/var(--tw-text-opacity, 1))
+        }
+
+        .text-gray-700 {
+            --tw-text-opacity: 1;
+            color: rgb(55 65 81/var(--tw-text-opacity, 1))
+        }
+
+        .text-gray-900 {
+            --tw-text-opacity: 1;
+            color: rgb(17 24 39/var(--tw-text-opacity, 1))
+        }
+
+        .text-red-600 {
+            --tw-text-opacity: 1;
+            color: rgb(220 38 38/var(--tw-text-opacity, 1))
+        }
+
+        .text-white {
+            --tw-text-opacity: 1;
+            color: rgb(255 255 255/var(--tw-text-opacity, 1))
+        }
+
+        .text-yellow-500 {
+            --tw-text-opacity: 1;
+            color: rgb(234 179 8/var(--tw-text-opacity, 1))
+        }
+
+        .text-opacity-80 {
+            --tw-text-opacity: .8
+        }
+
+        .opacity-80 {
+            opacity: .8
+        }
+
+        .shadow {
+            --tw-shadow: 0 1px 3px 0 #0000001a, 0 1px 2px -1px #0000001a;
+            --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
+            box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
+        }
+
+        .shadow-lg {
+            --tw-shadow: 0 10px 15px -3px #0000001a, 0 4px 6px -4px #0000001a;
+            --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
+            box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
+        }
+
+        .shadow-md {
+            --tw-shadow: 0 4px 6px -1px #0000001a, 0 2px 4px -2px #0000001a;
+            --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
+            box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
+        }
+
+        .ring-2 {
+            --tw-ring-offset-shadow: var(--tw-ring-inset)0 0 0 var(--tw-ring-offset-width)var(--tw-ring-offset-color);
+            --tw-ring-shadow: var(--tw-ring-inset)0 0 0 calc(2px + var(--tw-ring-offset-width))var(--tw-ring-color);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)
+        }
+
+        .ring-blue-500 {
+            --tw-ring-opacity: 1;
+            --tw-ring-color: rgb(59 130 246/var(--tw-ring-opacity, 1))
+        }
+
+        .backdrop-blur-sm {
+            --tw-backdrop-blur: blur(4px);
+            backdrop-filter: var(--tw-backdrop-blur)var(--tw-backdrop-brightness)var(--tw-backdrop-contrast)var(--tw-backdrop-grayscale)var(--tw-backdrop-hue-rotate)var(--tw-backdrop-invert)var(--tw-backdrop-opacity)var(--tw-backdrop-saturate)var(--tw-backdrop-sepia)
+        }
+
+        .transition {
+            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+            transition-duration: .15s;
+            transition-timing-function: cubic-bezier(.4, 0, .2, 1)
+        }
+
+        .transition-all {
+            transition-property: all;
+            transition-duration: .15s;
+            transition-timing-function: cubic-bezier(.4, 0, .2, 1)
+        }
+
+        .transition-colors {
+            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+            transition-duration: .15s;
+            transition-timing-function: cubic-bezier(.4, 0, .2, 1)
+        }
+
+        .duration-300 {
+            transition-duration: .3s
+        }
+
+        .hover\:-translate-y-1:hover {
+            --tw-translate-y: -.25rem;
+            transform: translate(var(--tw-translate-x), var(--tw-translate-y))rotate(var(--tw-rotate))skewX(var(--tw-skew-x))skewY(var(--tw-skew-y))scaleX(var(--tw-scale-x))scaleY(var(--tw-scale-y))
+        }
+
+        .hover\:bg-blue-600:hover {
+            --tw-bg-opacity: 1;
+            background-color: rgb(37 99 235/var(--tw-bg-opacity, 1))
+        }
+
+        .hover\:bg-blue-700:hover {
+            --tw-bg-opacity: 1;
+            background-color: rgb(29 78 216/var(--tw-bg-opacity, 1))
+        }
+
+        .hover\:bg-gray-100:hover {
+            --tw-bg-opacity: 1;
+            background-color: rgb(243 244 246/var(--tw-bg-opacity, 1))
+        }
+
+        .hover\:bg-purple-700:hover {
+            --tw-bg-opacity: 1;
+            background-color: rgb(126 34 206/var(--tw-bg-opacity, 1))
+        }
+
+        .hover\:bg-white:hover {
+            --tw-bg-opacity: 1;
+            background-color: rgb(255 255 255/var(--tw-bg-opacity, 1))
+        }
+
+        .hover\:bg-opacity-10:hover {
+            --tw-bg-opacity: .1
+        }
+
+        .hover\:text-blue-600:hover {
+            --tw-text-opacity: 1;
+            color: rgb(37 99 235/var(--tw-text-opacity, 1))
+        }
+
+        .hover\:text-red-700:hover {
+            --tw-text-opacity: 1;
+            color: rgb(185 28 28/var(--tw-text-opacity, 1))
+        }
+
+        .hover\:text-opacity-100:hover {
+            --tw-text-opacity: 1
+        }
+
+        .hover\:opacity-100:hover {
+            opacity: 1
+        }
+
+        .hover\:shadow-lg:hover {
+            --tw-shadow: 0 10px 15px -3px #0000001a, 0 4px 6px -4px #0000001a;
+            --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
+            box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
+        }
+
+        .hover\:shadow-xl:hover {
+            --tw-shadow: 0 20px 25px -5px #0000001a, 0 8px 10px -6px #0000001a;
+            --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
+            box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
+        }
+
+        .hover\:shadow-md:hover {
+            --tw-shadow: 0 4px 6px -1px #0000001a, 0 2px 4px -2px #0000001a;
+            --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
+            box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
+        }
+
+        .focus\:outline-none:focus {
+            outline-offset: 2px;
+            outline: 2px solid #0000
+        }
+
+        .focus\:ring-2:focus {
+            --tw-ring-offset-shadow: var(--tw-ring-inset)0 0 0 var(--tw-ring-offset-width)var(--tw-ring-offset-color);
+            --tw-ring-shadow: var(--tw-ring-inset)0 0 0 calc(2px + var(--tw-ring-offset-width))var(--tw-ring-color);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)
+        }
+
+        .focus\:ring-blue-500:focus {
+            --tw-ring-opacity: 1;
+            --tw-ring-color: rgb(59 130 246/var(--tw-ring-opacity, 1))
+        }
+
+        .dark\:left-5:is(.dark *) {
+            left: 1.25rem
+        }
+
+        .dark\:block:is(.dark *) {
+            display: block
+        }
+
+        .dark\:hidden:is(.dark *) {
+            display: none
+        }
+
+        .dark\:divide-gray-700:is(.dark *)>:not([hidden])~:not([hidden]) {
+            --tw-divide-opacity: 1;
+            border-color: rgb(55 65 81/var(--tw-divide-opacity, 1))
+        }
+
+        .dark\:border-gray-700:is(.dark *) {
+            --tw-border-opacity: 1;
+            border-color: rgb(55 65 81/var(--tw-border-opacity, 1))
+        }
+
+        .dark\:bg-blue-600:is(.dark *) {
+            --tw-bg-opacity: 1;
+            background-color: rgb(37 99 235/var(--tw-bg-opacity, 1))
+        }
+
+        .dark\:bg-gray-700:is(.dark *) {
+            --tw-bg-opacity: 1;
+            background-color: rgb(55 65 81/var(--tw-bg-opacity, 1))
+        }
+
+        .dark\:bg-gray-800:is(.dark *) {
+            --tw-bg-opacity: 1;
+            background-color: rgb(31 41 55/var(--tw-bg-opacity, 1))
+        }
+
+        .dark\:bg-gray-900:is(.dark *) {
+            --tw-bg-opacity: 1;
+            background-color: rgb(17 24 39/var(--tw-bg-opacity, 1))
+        }
+
+        .dark\:text-gray-100:is(.dark *) {
+            --tw-text-opacity: 1;
+            color: rgb(243 244 246/var(--tw-text-opacity, 1))
+        }
+
+        .dark\:text-gray-300:is(.dark *) {
+            --tw-text-opacity: 1;
+            color: rgb(209 213 219/var(--tw-text-opacity, 1))
+        }
+
+        .dark\:text-gray-400:is(.dark *) {
+            --tw-text-opacity: 1;
+            color: rgb(156 163 175/var(--tw-text-opacity, 1))
+        }
+
+        .dark\:hover\:bg-gray-700:hover:is(.dark *) {
+            --tw-bg-opacity: 1;
+            background-color: rgb(55 65 81/var(--tw-bg-opacity, 1))
+        }
+
+        .dark\:hover\:text-blue-400:hover:is(.dark *) {
+            --tw-text-opacity: 1;
+            color: rgb(96 165 250/var(--tw-text-opacity, 1))
+        }
+
+        @media (width>=768px) {
+            .md\:pt-8 {
+                padding-top: 2rem
+            }
+
+            .md\:text-6xl {
+                font-size: 3.75rem;
+                line-height: 1
+            }
+
+            .md\:text-xl {
+                font-size: 1.25rem;
+                line-height: 1.75rem
+            }
+        }
+    </style>
+    <style id="chat-theme-style">
+        .chat-header {
+            background: linear-gradient(90deg, #1e40af, #3b82f6)
+        }
+
+        .message-outgoing {
+            background: linear-gradient(135deg, #00b0ff, #2979ff)
+        }
+
+        #send-btn {
+            background-color: #1e40af
+        }
+    </style>
+    <style data-id="immersive-translate-input-injected-css">
+        .immersive-translate-input {
+            z-index: 2147483647;
+            justify-content: center;
+            align-items: center;
+            display: flex;
+            position: absolute;
+            inset: 0
+        }
+
+        .immersive-translate-attach-loading:after {
+            content: " ";
+            --loading-color: #f78fb6;
+            color: #fff;
+            box-sizing: border-box;
+            z-index: 100;
+            border-radius: 50%;
+            width: 6px;
+            height: 6px;
+            margin: 12px auto;
+            animation: 1.5s linear infinite immersiveTranslateShadowRolling;
+            display: block;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-2000%, -50%)
+        }
+
+        .immersive-translate-loading-spinner {
+            vertical-align: middle !important;
+            border: 2px solid #ddf4ff99 !important;
+            border-color: #00000060 #ddf4ff99 #ddf4ff99 #00000060 !important;
+            border-radius: 50% !important;
+            width: 10px !important;
+            height: 10px !important;
+            margin: 0 4px !important;
+            padding: 0 !important;
+            animation: .6s linear infinite immersive-translate-loading-animation !important;
+            display: inline-block !important
+        }
+
+        @-webkit-keyframes immersive-translate-loading-animation {
+            0% {
+                -webkit-transform: rotate(0)
+            }
+
+            to {
+                -webkit-transform: rotate(359deg)
+            }
+        }
+
+        @keyframes immersive-translate-loading-animation {
+            0% {
+                transform: rotate(0)
+            }
+
+            to {
+                transform: rotate(359deg)
+            }
+        }
+
+        .immersive-translate-input-loading {
+            --loading-color: #f78fb6;
+            color: #fff;
+            box-sizing: border-box;
+            border-radius: 50%;
+            width: 6px;
+            height: 6px;
+            margin: 12px auto;
+            animation: 1.5s linear infinite immersiveTranslateShadowRolling;
+            display: block;
+            position: relative;
+            left: -100px
+        }
+
+        @keyframes immersiveTranslateShadowRolling {
+            0% {
+                box-shadow: 0 0 #fff0, 0 0 #fff0, 0 0 #fff0, 0 0 #fff0
+            }
+
+            12% {
+                box-shadow: 100px 0 var(--loading-color), 0px 0 #fff0, 0px 0 #fff0, 0px 0 #fff0
+            }
+
+            25% {
+                box-shadow: 110px 0 var(--loading-color), 100px 0 var(--loading-color), 0px 0 #fff0, 0px 0 #fff0
+            }
+
+            36% {
+                box-shadow: 120px 0 var(--loading-color), 110px 0 var(--loading-color), 100px 0 var(--loading-color), 0px 0 #fff0
+            }
+
+            50% {
+                box-shadow: 130px 0 var(--loading-color), 120px 0 var(--loading-color), 110px 0 var(--loading-color), 100px 0 var(--loading-color)
+            }
+
+            62% {
+                box-shadow: 200px 0 #fff0, 130px 0 var(--loading-color), 120px 0 var(--loading-color), 110px 0 var(--loading-color)
+            }
+
+            75% {
+                box-shadow: 200px 0 #fff0, 200px 0 #fff0, 130px 0 var(--loading-color), 120px 0 var(--loading-color)
+            }
+
+            87% {
+                box-shadow: 200px 0 #fff0, 200px 0 #fff0, 200px 0 #fff0, 130px 0 var(--loading-color)
+            }
+
+            to {
+                box-shadow: 200px 0 #fff0, 200px 0 #fff0, 200px 0 #fff0, 200px 0 #fff0
+            }
+        }
+
+        .immersive-translate-toast {
+            z-index: 2147483647;
+            color: #333;
+            background: #fef6f9;
+            border-radius: 8px;
+            width: fit-content;
+            margin: auto;
+            padding: 12px 20px;
+            font-size: 15px;
+            display: flex;
+            position: fixed;
+            top: 1%;
+            left: 0;
+            right: 0;
+            overflow: auto;
+            box-shadow: 0 4px 10px #000a1e0f
+        }
+
+        .immersive-translate-toast-content {
+            flex-direction: row;
+            align-items: center;
+            display: flex
+        }
+
+        .immersive-translate-toast-hidden {
+            cursor: pointer;
+            margin: 0 20px 0 72px;
+            text-decoration: underline
+        }
+
+        .immersive-translate-toast-close {
+            color: #666;
+            cursor: pointer;
+            padding: 0 10px;
+            font-size: 20px;
+            font-weight: 700
+        }
+
+        @media screen and (width<=768px) {
+            .immersive-translate-toast {
+                padding: 12px 0 0 10px;
+                top: 0
+            }
+
+            .immersive-translate-toast-content {
+                text-align: center;
+                flex-direction: column
+            }
+
+            .immersive-translate-toast-hidden {
+                margin: 10px auto
+            }
+        }
+
+        .immersive-translate-modal {
+            z-index: 2147483647;
+            background-color: #0006;
+            width: 100%;
+            height: 100%;
+            font-size: 15px;
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow: auto
+        }
+
+        .immersive-translate-modal-content {
+            background-color: #fefefe;
+            border: 1px solid #888;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 270px;
+            margin: 10% auto;
+            padding: 40px 24px 24px;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+            position: relative
+        }
+
+        @media screen and (width<=768px) {
+            .immersive-translate-modal-content {
+                margin: 50% auto !important
+            }
+        }
+
+        .immersive-translate-modal .immersive-translate-modal-content-in-input {
+            max-width: 500px
+        }
+
+        .immersive-translate-modal-content-in-input .immersive-translate-modal-body {
+            text-align: left;
+            max-height: unset
+        }
+
+        .immersive-translate-modal-title {
+            text-align: center;
+            color: #333;
+            font-size: 16px;
+            font-weight: 700
+        }
+
+        .immersive-translate-modal-body {
+            text-align: center;
+            color: #333;
+            word-break: break-all;
+            margin-top: 24px;
+            font-size: 14px;
+            font-weight: 400
+        }
+
+        @media screen and (width<=768px) {
+            .immersive-translate-modal-body {
+                max-height: 250px;
+                overflow-y: auto
+            }
+        }
+
+        .immersive-translate-close {
+            color: #666;
+            font-size: 20px;
+            font-weight: 700;
+            position: absolute;
+            top: 16px;
+            right: 16px
+        }
+
+        .immersive-translate-close:hover,
+        .immersive-translate-close:focus {
+            color: #000;
+            cursor: pointer;
+            text-decoration: none
+        }
+
+        .immersive-translate-modal-footer {
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 24px;
+            display: flex
+        }
+
+        .immersive-translate-btn {
+            color: #fff;
+            cursor: pointer;
+            background-color: #ea4c89;
+            border: none;
+            border-radius: 5px;
+            justify-content: center;
+            align-items: center;
+            width: fit-content;
+            margin: 0 8px;
+            padding: 9px 30px;
+            font-size: 16px;
+            transition: background-color .3s;
+            display: flex
+        }
+
+        .immersive-translate-btn:hover {
+            background-color: #f082ac
+        }
+
+        .immersive-translate-btn:disabled {
+            opacity: .6;
+            cursor: not-allowed
+        }
+
+        .immersive-translate-btn:disabled:hover {
+            background-color: #ea4c89
+        }
+
+        .immersive-translate-cancel-btn {
+            background-color: #596b78
+        }
+
+        .immersive-translate-cancel-btn:hover {
+            background-color: #415462
+        }
+
+        .immersive-translate-action-btn {
+            color: #ea4c89;
+            background-color: #0000;
+            border: 1px solid #ea4c89
+        }
+
+        .immersive-translate-btn svg {
+            margin-right: 5px
+        }
+
+        .immersive-translate-link {
+            cursor: pointer;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-user-drag: none;
+            color: #007bff;
+            -webkit-tap-highlight-color: #0000001a;
+            text-decoration: none
+        }
+
+        .immersive-translate-primary-link {
+            cursor: pointer;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-user-drag: none;
+            color: #ea4c89;
+            -webkit-tap-highlight-color: #0000001a;
+            text-decoration: none
+        }
+
+        .immersive-translate-modal input[type=radio] {
+            cursor: pointer;
+            margin: 0 6px
+        }
+
+        .immersive-translate-modal label {
+            cursor: pointer
+        }
+
+        .immersive-translate-close-action {
+            cursor: pointer;
+            position: absolute;
+            top: 2px;
+            right: 0
+        }
+
+        .imt-image-status {
+            background-color: #00000080 !important;
+            border-radius: 16px !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            align-items: center !important;
+            display: flex !important
+        }
+
+        .imt-image-status img,
+        .imt-image-status svg,
+        .imt-img-loading {
+            width: 28px !important;
+            min-width: 28px !important;
+            height: 28px !important;
+            min-height: 28px !important;
+            margin: 0 0 8px !important;
+            position: relative !important
+        }
+
+        .imt-img-loading {
+            background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADgAAAA4CAMAAACfWMssAAAAtFBMVEUAAAD////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////oK74hAAAAPHRSTlMABBMIDyQXHwyBfFdDMSw+OjXCb+5RG51IvV/k0rOqlGRM6KKMhdvNyZBz9MaupmxpWyj437iYd/yJVNZeuUC7AAACt0lEQVRIx53T2XKiUBCA4QYOiyCbiAsuuGBcYtxiYtT3f6/pbqoYHVFO5r+iivpo6DpAWYpqeoFfr9f90DsYAuRSWkFnPO50OgR9PwiCUFcl2GEcx+N/YBh6pvKaefHlUgZd1zVe0NbYcQjGBfzrPE8Xz8aF+71D8gG6DHFPpc4a7xFiCDuhaWgKgGIJQ3d5IMGDrpS4S5KgpIm+en9f6PlAhKby4JwEIxlYJV9h5k5nee9GoxHJ2IDSNB0dwdad1NAxDJ/uXDHYmebdk4PdbkS58CIVHdYSUHTYYRWOJblWSyu2lmy3KNFVJNBhxcuGW4YBVCbYGRZwIooipHsNqjM4FbgOQqQqSKQQU9V8xmi1QlgHqQQ6DDBvRUVCDirs+EzGDGOQTCATgtYTnbCVLgsVgRE0T1QE0qHCFAht2z6dLvJQs3Lo2FQoDxWNUiBhaP4eRgwNkI+dAjVOA/kUrIDwf3CG8NfNOE0eiFotSuo+rBiq8tD9oY4Qzc6YJw99hl1wzpQvD7ef2M8QgnOGJfJw+EltQc+oX2yn907QB22WZcvlUpd143dqQu+8pCJZuGE4xCuPXJqqcs5sNpsI93Rmzym1k4Npk+oD1SH3/a3LOK/JpUBpWfqNySxWzCfNCUITuDG5dtuphrUJ1myeIE9bIsPiKrfqTai5WZxbhtNphYx6GEIHihyGFTI69lje/rxajdh0s0msZ0zYxyPLhYCb1CyHm9Qsd2H37Y3lugVwL9kNh8Ot8cha6fUNQ8nuXi5z9/ExsAO4zQrb/ev1yrCB7lGyQzgYDGuxq1toDN/JGvN+HyWNHKB7zEoK+PX11e12G431erGYzwmytAWU56fkMHY5JJnDRR2eZji3AwtIcrEV8Cojat/BdQ7XOwGV1e1hDjGGjXbdArm8uJZtCH5MbcctVX8A1WpqumJHwckAAAAASUVORK5CYII=);
+            background-size: 28px 28px;
+            animation: 1s linear infinite image-loading-rotate !important
+        }
+
+        .imt-image-status span {
+            color: var(--bg-2, #fff) !important;
+            font-family: PingFang SC, Arial, sans-serif !important;
+            font-size: 14px !important;
+            font-weight: 500 !important;
+            line-height: 14px !important
+        }
+
+        @keyframes image-loading-rotate {
+            0% {
+                transform: rotate(360deg)
+            }
+
+            to {
+                transform: rotate(0)
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 dark:bg-gray-900 dark:text-gray-100 h-full m-0 overflow-hidden p-0 text-gray-900 w-full">
+    <div id="app" class="flex flex-col h-full w-full">
+        <div id="home-page" class="flex flex-col items-center justify-center min-h-screen p-4">
+            <div class="mb-10 text-center">
+                <h1 class="font-bold mb-4 md:text-6xl text-4xl"> <svg class="max-w-md mx-auto w-full"
+                        viewBox="0 0 500 120">
+                        <defs>
+                            <linearGradient id="logoGradient" x1="0%" x2="100%" y1="0%" y2="0%">
+                                <stop offset="0%" stop-color="#3b82f6" />
+                                <stop offset="100%" stop-color="#8b5cf6" />
+                            </linearGradient>
+                        </defs>
+                        <g class="logo-group">
+                            <path fill="url(#logoGradient)"
+                                d="M60 40H50V30c0-11 9-20 20-20s20 9 20 20v10H80V30c0-5.5-4.5-10-10-10s-10 4.5-10 10z" />
+                            <rect width="40" height="30" x="40" y="40" fill="url(#logoGradient)" rx="5" />
+                            <circle cx="60" cy="55" r="5" fill="#fff" />
+                            <path fill="url(#logoGradient)"
+                                d="M120 30h15c8 0 15 7 15 15s-7 15-15 15h-15zm10 10v10h5c3 0 5-2 5-5s-2-5-5-5zM160 30h10l15 15V30h10v30h-10l-15-15v15h-10zM205 30h15c8 0 15 7 15 15s-7 15-15 15h-15zm10 10v10h5c3 0 5-2 5-5s-2-5-5-5zM250 30h10v22h15v8h-25zM280 45c0-8 7-15 15-15s15 7 15 15-7 15-15 15-15-7-15-15m10 0c0 3 2 5 5 5s5-2 5-5-2-5-5-5-5 2-5 5M315 45c0-8 7-15 15-15s15 7 15 15-7 15-15 15-15-7-15-15m10 0c0 3 2 5 5 5s5-2 5-5-2-5-5-5-5 2-5 5M350 30h30v8h-10v22h-10V38h-10z" />
+                            <path fill="url(#logoGradient)"
+                                d="M30 80q5-5 10 0t10 0 10 0 10 0 10 0 10 0v10H30zM390 40q5-5 10 0t10 0 10 0 10 0 10 0 10 0v10h-60z"
+                                opacity=".3" />
+                            <circle cx="420" cy="65" r="3" fill="url(#logoGradient)" opacity=".5" />
+                            <circle cx="430" cy="75" r="3" fill="url(#logoGradient)" opacity=".5" />
+                            <circle cx="440" cy="55" r="3" fill="url(#logoGradient)" opacity=".5" />
+                            <circle cx="450" cy="35" r="3" fill="url(#logoGradient)" opacity=".5" />
+                            <circle cx="460" cy="65" r="3" fill="url(#logoGradient)" opacity=".5" /><text x="25" y="70"
+                                fill="url(#logoGradient)" font-family="monospace" font-size="12" opacity=".7"> 010101
+                            </text><text x="20" y="85" fill="url(#logoGradient)" font-family="monospace" font-size="12"
+                                opacity=".7"> 101010 </text>
+                        </g>
+                    </svg> </h1>
+                <p class="dark:text-gray-400 md:text-xl text-gray-600 text-lg"> 端到端加密，无服务器，持久数据 </p>
+                <div class="mb-4 mt-2"> <svg class="max-w-sm mx-auto w-full" viewBox="0 0 300 30">
+                        <defs>
+                            <linearGradient id="subtitleGradient" x1="0%" x2="100%" y1="0%" y2="0%">
+                                <stop offset="0%" stop-color="#4f46e5" />
+                                <stop offset="100%" stop-color="#8b5cf6" />
+                            </linearGradient>
+                        </defs><text x="50%" y="20" fill="url(#subtitleGradient)" font-family="system-ui, -apple-system"
+                            font-size="14" font-weight="300" letter-spacing="1.5" text-anchor="middle">
+                            加密交流，文件安全传输，无记录无痕迹 </text>
+                    </svg> </div>
+            </div>
+            <div
+                class="bg-white dark:bg-gray-800 duration-300 hover:shadow-xl max-w-md mb-8 p-6 rounded-lg shadow-lg transform transition w-full">
+                <div class="mb-4"> <label for="nickname" class="block font-medium mb-2 text-sm">设置昵称</label> <input type="text" id="nickname" class="border border-gray-300 dark:bg-gray-700 dark:border-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 px-3 py-2 rounded-md w-full" placeholder="请输入您的昵称">
+                </div>
+                <div class="gap-4 grid grid-cols-2 mb-4">
+                    <button id="create-room-btn" class="bg-blue-600 duration-300 flex hover:-translate-y-1 hover:bg-blue-700 hover:shadow-lg items-center justify-center px-4 py-3 rounded-md shadow-md text-white transform transition"> <i class="fa-plus-circle fas mr-2"></i> 创建群聊 </button>
+                    <button id="join-room-btn" class="bg-purple-600 duration-300 flex hover:-translate-y-1 hover:bg-purple-700 hover:shadow-lg items-center justify-center px-4 py-3 rounded-md shadow-md text-white transform transition"> <i class="fa-sign-in-alt fas mr-2"></i> 加入群聊 </button>
+                </div>
+            </div>
+            <div id="chat-history-container"
+                class="bg-white dark:bg-gray-800 hidden max-w-md mb-4 p-4 rounded-lg shadow-lg w-full">
+                <h3 class="flex font-medium items-center justify-between mb-3 text-lg"> <span>历史群聊</span>
+                    <button id="toggle-history" class="dark:hover:text-blue-400 dark:text-gray-400 hover:text-blue-600 text-gray-500 text-sm"> <i class="fa-chevron-up fas"></i> </button>
+                </h3>
+                <div id="chat-history-list" class="max-h-60 overflow-y-auto space-y-2"> </div>
+            </div>
+            <div id="join-room-modal"
+                class="backdrop-blur-sm bg-black bg-opacity-50 fixed flex hidden inset-0 items-center justify-center z-50">
+                <div
+                    class="bg-white dark:bg-gray-800 duration-300 max-w-md p-6 rounded-lg scale-100 shadow-lg transform transition-all w-full">
+                    <h2 class="font-bold mb-4 text-xl">加入群聊</h2>
+                    <div class="mb-4"> <label for="room-code" class="block font-medium mb-2 text-sm">群聊码</label> <input type="text" id="room-code" class="border border-gray-300 dark:bg-gray-700 dark:border-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 px-3 py-2 rounded-md w-full" placeholder="请输入群聊码">
+                    </div>
+                    <div class="flex justify-end space-x-2">
+                        <button id="cancel-join" class="border border-gray-300 dark:border-gray-700 dark:hover:bg-gray-700 duration-300 hover:bg-gray-100 px-4 py-2 rounded-md transition"> 取消 </button>
+                        <button id="confirm-join" class="bg-blue-600 duration-300 hover:bg-blue-700 hover:shadow-lg px-4 py-2 rounded-md shadow-md text-white transition"> 加入 </button>
+                    </div>
+                </div>
+            </div>
+            <div class="flex mt-8 space-x-4">
+                <button id="settings-btn" class="dark:hover:text-blue-400 dark:text-gray-400 duration-300 flex hover:text-blue-600 items-center text-gray-600 transition"> <i class="fa-cog fas mr-2"></i> 设置 </button>
+                <button id="toggle-theme" class="dark:hover:text-blue-400 dark:text-gray-400 duration-300 flex hover:text-blue-600 items-center text-gray-600 transition"> <i class="dark:hidden fa-moon fas mr-2"></i> <i class="dark:block fa-sun fas hidden mr-2"></i> <span class="dark:hidden">深色模式</span> <span class="dark:block hidden">浅色模式</span> </button>
+            </div>
+            <div class="dark:text-gray-400 mt-8 text-gray-500 text-sm">
+                <p class="text-center">基于WebRTC的点对点通信</p>
+            </div>
+        </div>
+        <div id="chat-page" class="flex flex-col h-full hidden w-full">
+            <div class="chat-header">
+                <div class="flex items-center">
+                    <button id="back-btn" class="duration-300 hover:opacity-100 text-white transition"> <i class="fa-arrow-left fas"></i> </button>
+                    <div class="flex-1">
+                        <h2 id="room-name" class="font-bold text-xl">群聊名称</h2>
+                        <p id="online-count"
+                            class="cursor-pointer hover:text-opacity-100 text-opacity-80 text-sm text-white transition">
+                            在线人数: 0 </p>
+                    </div>
+                    <button id="room-settings" class="hover:bg-opacity-10 hover:bg-white hover:opacity-100 ml-2 opacity-80 p-2 rounded-full text-white transition"> <i class="fa-ellipsis-v fas"></i> </button>
+                </div>
+            </div>
+            <div id="online-users-dropdown"
+                class="absolute bg-white dark:bg-gray-800 dark:divide-gray-700 divide-gray-200 divide-y hidden left-4 max-h-64 overflow-y-auto rounded-md shadow-lg top-24 w-64 z-10">
+                <h3
+                    class="bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700 font-bold p-3 sticky top-0">
+                    在线用户 </h3>
+                <ul id="users-list" class="py-1"> </ul>
+            </div>
+            <div id="messages-container" class="flex-1 overflow-y-auto">
+                <div class="system-message"> 欢迎使用P2P群聊，所有消息均为端到端加密 </div>
+            </div>
+            <div class="border-gray-200 border-t chat-input-container dark:border-gray-700">
+                <div id="emoji-container" class="gap-2 grid grid-cols-8 hidden max-h-40 mb-2 overflow-y-auto"> </div>
+                <div id="sticker-container"
+                    class="bg-gray-50 border-gray-200 border-t dark:bg-gray-800 dark:border-gray-700 flex flex-col hidden mb-2 p-2">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="font-medium text-sm">表情包</h3>
+                        <div class="flex items-center">
+                            <span id="sticker-count" class="mr-2 text-gray-500 text-xs">(20)</span>
+                            <button id="refresh-stickers" class="bg-blue-500 hover:bg-blue-600 px-2 py-1 rounded text-white text-xs transition-colors" disabled> <i class="fa-sync-alt fas mr-1"></i>刷新 </button>
+                        </div>
+                    </div>
+                    <div id="sticker-grid" class="gap-2 grid grid-cols-4 max-h-60 overflow-y-auto">
+                        <div class="sticker-item" data-id="sticker-1744878025255-0.5370364138105352"> <img src="" loading="lazy" alt="表情包">
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-end">
+                    <button id="emoji-btn" class="chat-action-btn"> <i class="fa-smile far"></i> </button>
+                    <button id="sticker-btn" class="chat-action-btn"> <i class="fa-grin-squint far"></i> </button>
+                    <button id="attachment-btn" class="chat-action-btn"> <i class="fa-paperclip fas"></i> </button>
+                    <input type="file" id="file-input" class="hidden">
+                    <div
+                        class="bg-white border border-gray-300 dark:bg-gray-800 dark:border-gray-700 flex-1 mx-2 rounded-2xl">
+                        <textarea id="message-input" class="bg-transparent dark:text-gray-100 focus:outline-none p-3 resize-none w-full" placeholder="输入消息..." rows="1"></textarea>
+                    </div> <button id="voice-btn" class="chat-action-btn"> <i class="fa-microphone fas"></i> </button>
+                    <button id="send-btn" class="chat-action-btn"> <i class="fa-paper-plane fas"></i> </button>
+                </div>
+            </div>
+            <button id="scroll-bottom" class="bg-blue-600 bottom-24 fixed hidden p-3 right-6 rounded-full shadow-lg text-white"> <i class="fa-chevron-down fas"></i> </button>
+        </div>
+        <div id="settings-page" class="hidden min-h-screen p-4">
+            <div class="max-w-md mx-auto pt-8">
+                <div class="flex items-center mb-6">
+                    <button id="back-from-settings" class="dark:hover:text-blue-400 dark:text-gray-400 duration-300 hover:text-blue-600 mr-4 text-gray-600 transition"> <i class="fa-arrow-left fas"></i> </button>
+                    <h2 class="font-bold text-xl">设置</h2>
+                </div>
+                <div class="bg-white dark:bg-gray-800 mb-4 p-4 rounded-lg shadow-md">
+                    <div class="flex items-center justify-between py-2"> <span>深色模式</span>
+                        <button id="settings-toggle-theme" class="bg-gray-300 dark:bg-blue-600 duration-300 h-6 inline-flex items-center relative rounded-full transition w-11"> <span class="absolute bg-white dark:left-5 flex h-6 inset-y-0 items-center justify-center left-0 rounded-full shadow transition-all w-6"></span> </button>
+                    </div>
+                    <div class="border-gray-200 border-t dark:border-gray-700 py-2">
+                        <label for="language-select" class="block mb-2">语言</label>
+                        <select id="language-select" class="bg-white border border-gray-300 dark:bg-gray-800 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 p-2 rounded-md w-full"> <option value="zh-CN">中文 (简体)</option> <option value="en">English</option> </select>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+                    <h3 class="font-bold mb-2">隐私政策</h3>
+                    <p class="dark:text-gray-400 text-gray-600 text-sm">
+                        本应用采用点对点通信技术，不会在任何服务器上存储您的通信内容。所有消息都经过端到端加密，只有参与对话的成员才能解密查看。我们不收集任何个人识别信息，您的隐私和安全是我们的首要任务。 </p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 mt-4 p-4 rounded-lg shadow-md">
+                    <h3 class="font-bold mb-2">关于</h3>
+                    <p class="dark:text-gray-400 text-gray-600 text-sm"> 版本: 1.0.0<br> 基于PeerJS的去中心化即时通讯应用 </p>
+                </div>
+            </div>
+        </div>
+        <div id="room-settings-page" class="hidden min-h-screen p-4">
+            <div class="max-w-md md:pt-8 mx-auto pt-4">
+                <div class="flex items-center mb-6">
+                    <button id="back-from-room-settings" class="dark:hover:text-blue-400 dark:text-gray-400 duration-300 hover:text-blue-600 mr-4 text-gray-600 transition"> <i class="fa-arrow-left fas"></i> </button>
+                    <h2 class="font-bold text-xl">群聊设置</h2>
+                </div>
+                <div class="bg-white dark:bg-gray-800 mb-4 p-4 rounded-lg shadow-md">
+                    <div class="mb-4"> <label for="room-name-input" class="block font-medium mb-2 text-sm">群聊名称</label>
+                        <input type="text" id="room-name-input" class="border border-gray-300 dark:bg-gray-700 dark:border-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 px-3 py-2 rounded-md w-full">
+                    </div>
+                    <div class="mb-4">
+                        <div class="flex items-center justify-between"> <label class="font-medium text-sm">主持人模式</label>
+                            <button id="host-mode-toggle" class="bg-gray-300 duration-300 h-6 inline-flex items-center relative rounded-full transition w-11"> <span class="absolute bg-white flex h-6 inset-y-0 items-center justify-center left-0 rounded-full shadow transition-all w-6"></span> </button>
+                        </div>
+                        <p class="dark:text-gray-400 mt-2 text-gray-500 text-xs"> 启用后，只有群主可以发送消息，其他人只能查看 </p>
+                    </div>
+                    <div class="mb-4"> <label class="block font-medium mb-2 text-sm">群聊码</label>
+                        <div class="flex"> <input type="text" id="room-code-display" class="bg-gray-100 border border-gray-300 dark:bg-gray-700 dark:border-gray-700 dark:text-gray-300 flex-1 px-3 py-2 rounded-l-md" readonly>
+                            <button id="copy-room-code" class="bg-blue-600 duration-300 hover:bg-blue-700 px-3 py-2 rounded-r-md text-white transition"> <i class="fa-copy far"></i> </button>
+                        </div>
+                        <p class="dark:text-gray-400 mt-2 text-gray-500 text-xs"> 分享此群聊码给他人，让他们加入群聊 </p>
+                    </div>
+                    <div class="border-gray-200 border-t dark:border-gray-700 py-2 text-red-600">
+                        <button id="leave-room" class="duration-300 flex hover:text-red-700 items-center transition"> <i class="fa-sign-out-alt fas mr-2"></i> 退出群聊 </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="webrtc-warning"
+            class="backdrop-blur-sm bg-black bg-opacity-75 fixed flex hidden inset-0 items-center justify-center z-50">
+            <div class="bg-white dark:bg-gray-800 max-w-md p-6 rounded-lg shadow-lg">
+                <div class="mb-4 text-center"> <i class="fa-exclamation-triangle fas text-4xl text-yellow-500"></i>
+                </div>
+                <h2 class="font-bold mb-2 text-center text-xl">WebRTC不可用</h2>
+                <p class="mb-4"> 您的浏览器未启用WebRTC功能，这是本应用正常运行所必需的。请启用WebRTC后刷新页面。 </p>
+                <button id="webrtc-ok" class="bg-blue-600 duration-300 hover:bg-blue-700 py-2 rounded-md text-white transition w-full"> 了解 </button>
+            </div>
+        </div>
+        <div id="welcome-modal"
+            class="backdrop-blur-sm bg-black bg-opacity-75 fixed flex hidden inset-0 items-center justify-center z-50">
+            <div class="bg-white dark:bg-gray-800 max-w-md mx-4 p-6 rounded-lg shadow-lg">
+                <div class="mb-4 text-center"> <i class="fa-comment-dots fas text-4xl text-blue-500"></i> </div>
+                <h2 class="font-bold mb-2 text-center text-xl"> 欢迎使用P2P加密聊天 </h2>
+                <div class="mb-4 space-y-4">
+                    <p class="dark:text-gray-300 text-gray-700"> 这是一款<strong>端到端加密</strong>的聊天工具，适用于以下场景： </p>
+                    <ul class="dark:text-gray-300 list-disc pl-5 space-y-2 text-gray-700">
+                        <li>临时的群聊讨论，无需注册账号</li>
+                        <li>加密交流，不经过服务器</li>
+                        <li>文件安全传输，点对点直接发送</li>
+                        <li>私密会议，无记录无痕迹</li>
+                    </ul>
+                    <p class="dark:text-gray-300 text-gray-700"> <strong>使用技巧：</strong> </p>
+                    <ul class="dark:text-gray-300 list-disc pl-5 space-y-2 text-gray-700">
+                        <li>创建群聊后，分享群聊码给朋友</li>
+                        <li>长按消息气泡可查看加密内容</li>
+                        <li>主持人模式可控制发言权限</li>
+                    </ul>
+                </div>
+                <button id="welcome-ok" class="bg-blue-600 duration-300 hover:bg-blue-700 py-2 rounded-md text-white transition w-full"> 开始体验 </button>
+            </div>
+        </div>
+    </div>
+</body>
+<div id="immersive-translate-popup" style="all:initial"></div>
+
+</html>
