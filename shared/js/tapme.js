@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeToggle = document.getElementById('theme-toggle');
     const scoreElement = document.createElement('div');
     scoreElement.classList.add('score-display');
-    scoreElement.textContent = 'Score: 0';
+    scoreElement.textContent = '积分: 0';
     document.querySelector('.game-info').appendChild(scoreElement);
 
     // 创建历史记录显示元素
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 重新开始游戏按钮事件
     restartButton.addEventListener('click', () => {
         // 显示自定义确认弹窗，而不是使用confirm
-        showConfirmModal('Are you sure you want to restart the game?', 'Current game progress will be lost.', () => {
+        showConfirmModal('确定要重新开始游戏吗？', '当前游戏进度将丢失。', () => {
             // 确认后执行
             localStorage.removeItem('tapmeGameState');
             initGame();
@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 更新积分显示
     function updateScoreDisplay() {
-        scoreElement.textContent = `Score: ${gameState.score}`;
+        scoreElement.textContent = `积分: ${gameState.score}`;
     }
     
     // 更新历史记录显示
@@ -154,8 +154,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const highestScore = localStorage.getItem('tapmeHighestScore') || 0;
         
         recordsElement.innerHTML = `
-            <div>Highest Number: ${highestNumber}</div>
-            <div>Highest Score: ${highestScore}</div>
+            <div>最高数字: ${highestNumber}</div>
+            <div>最高积分: ${highestScore}</div>
         `;
     }
     
@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 return JSON.parse(savedState);
             } catch (e) {
-                console.error('Failed to load game save:', e);
+                console.error('加载游戏存档失败:', e);
                 return null;
             }
         }
@@ -820,13 +820,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // 检查并更新最高数字记录
         if (gameState.isNewNumberRecord) {
             localStorage.setItem('tapmeHighestNumber', gameState.maxNumberInGame);
-            showNewRecordMessage('New highest number record!');
+            showNewRecordMessage('新的最高数字记录！');
         }
         
         // 检查并更新最高分记录
         if (gameState.isNewScoreRecord) {
             localStorage.setItem('tapmeHighestScore', gameState.score);
-            showNewRecordMessage('New highest point record!');
+            showNewRecordMessage('新的最高积分记录！');
         }
         
         // 更新显示
@@ -859,30 +859,30 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.className = 'game-modal';
         
         // 设置弹框内容
-        let message = '<h2>game over</h2>';
+        let message = '<h2>游戏结束</h2>';
         
         // 添加游戏结果
         message += `<div class="game-results">
-            <p>Score of this round: <span class="highlight-text">${gameState.score}</span></p>
-            <p>Maximum number: <span class="highlight-text">${gameState.maxNumberInGame}</span></p>
+            <p>本局得分: <span class="highlight-text">${gameState.score}</span></p>
+            <p>最大数字: <span class="highlight-text">${gameState.maxNumberInGame}</span></p>
         </div>`;
         
         // 如果破纪录，添加恭喜信息
         if (gameState.isNewNumberRecord || gameState.isNewScoreRecord) {
-            message += '<div class="congrats">Congratulations on breaking the record!</div>';
+            message += '<div class="congrats">恭喜你打破记录！</div>';
             
             if (gameState.isNewNumberRecord) {
-                message += `<p>New highest number: <span class="record-text">${gameState.maxNumberInGame}</span></p>`;
+                message += `<p>新的最高数字: <span class="record-text">${gameState.maxNumberInGame}</span></p>`;
             }
             
             if (gameState.isNewScoreRecord) {
-                message += `<p>New highest score: <span class="record-text">${gameState.score}</span></p>`;
+                message += `<p>新的最高分数: <span class="record-text">${gameState.score}</span></p>`;
             }
         }
         
         // 添加按钮
         message += '<div class="modal-buttons">'+
-            '<button id="modal-restart-btn" class="modal-btn primary-btn">Restart</button>'+
+            '<button id="modal-restart-btn" class="modal-btn primary-btn">重新开始</button>'+
         '</div>';
         
         modal.innerHTML = message;
@@ -913,8 +913,8 @@ document.addEventListener('DOMContentLoaded', () => {
             <h2>${title}</h2>
             <div class="modal-message">${message}</div>
             <div class="modal-buttons">
-                <button id="modal-cancel-btn" class="modal-btn">cancel</button>
-                <button id="modal-confirm-btn" class="modal-btn primary-btn">confirm</button>
+                <button id="modal-cancel-btn" class="modal-btn">取消</button>
+                <button id="modal-confirm-btn" class="modal-btn primary-btn">确定</button>
             </div>
         `;
         
