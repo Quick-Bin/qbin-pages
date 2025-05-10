@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文本Prompt分段工具</title>
+    <script>
+        const translations = {
+            'zh': {
+                'title': '文本Prompt分段工具',
+                'instructions': '使用说明',
+                'step1': '将长文本粘贴到下方文本框',
+                'step2': '设置最大分段长度（默认8000字符）',
+                'step3': '选择是否添加确认提示',
+                'step4': '点击"分段"按钮',
+                'tip': '工具会自动按段落分割文本，当段落过长时会尝试在句子结束处分段，保持语义完整。',
+                'pasteText': '粘贴您的长文本到下方文本框，然后点击"分段"按钮',
+                'placeholder': '在此粘贴您的长文本...',
+                'maxLength': '最大分段长度:',
+                'addPrompt': '在每段后添加\'请回复收到\'提示',
+                'splitBtn': '分段',
+                'saveSettings': '保存设置',
+                'loadSettings': '加载设置',
+                'toggleTheme': '切换主题',
+                'saveHTML': '保存为HTML',
+                'segmentTitle': '分段 ${index} (${length}字符)',
+                'copyBtn': '复制',
+                'confirmText': '重要指令：请务必回复"收到"以确认您已阅读并理解本段内容。\n\n'
+            },
+            'en': {
+                'title': 'Prompt Text Splitter',
+                'instructions': 'Instructions',
+                'step1': 'Paste your long text into the box below',
+                'step2': 'Set maximum segment length (default 8000 chars)',
+                'step3': 'Choose whether to add confirmation prompt',
+                'step4': 'Click "Split" button',
+                'tip': 'The tool will split text by paragraphs, and try to split at sentence boundaries when paragraphs are too long to maintain semantic integrity.',
+                'pasteText': 'Paste your long text below and click "Split" button',
+                'placeholder': 'Paste your text here...',
+                'maxLength': 'Max segment length:',
+                'addPrompt': 'Add \'Please reply received\' prompt after each segment',
+                'splitBtn': 'Split',
+                'saveSettings': 'Save Settings',
+                'loadSettings': 'Load Settings',
+                'toggleTheme': 'Toggle Theme',
+                'saveHTML': 'Save as HTML',
+                'segmentTitle': 'Segment ${index} (${length} chars)',
+                'copyBtn': 'Copy',
+                'confirmText': 'Important: Please reply "received" to confirm you have read and understood this segment.\n\n'
+            },
+            'fr': {
+                'title': 'rapide Outil de segmentation de texte',
+                'instructions': 'Instructions',
+                'step1': 'Collez votre long texte dans la zone ci-dessous',
+                'step2': 'Définir la longueur maximale du segment (8000 caractères par défaut)',
+                'step3': 'Choisissez d\'ajouter une invite de confirmation',
+                'step4': 'Cliquez sur le bouton "Segmenter"',
+                'tip': 'L\'outil segmentera le texte par paragraphes et tentera de segmenter aux limites des phrases lorsque les paragraphes sont trop longs pour maintenir l\'intégrité sémantique.',
+                'pasteText': 'Collez votre long texte ci-dessous et cliquez sur le bouton "Segmenter"',
+                'placeholder': 'Collez votre texte ici...',
+                'maxLength': 'Longueur max du segment:',
+                'addPrompt': 'Ajouter \'Veuillez répondre reçu\' après chaque segment',
+                'splitBtn': 'Segmenter',
+                'saveSettings': 'Enregistrer les paramètres',
+                'loadSettings': 'Charger les paramètres',
+                'toggleTheme': 'Changer le thème',
+                'saveHTML': 'Enregistrer en HTML',
+                'segmentTitle': 'Segment ${index} (${length} caractères)',
+                'copyBtn': 'Copier',
+                'confirmText': 'Important : Veuillez répondre "reçu" pour confirmer que vous avez lu et compris ce segment.\n\n'
+            }
+        };
+
+        let currentLang = 'zh';
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            updateUIText();
+            localStorage.setItem('textSplitterLanguage', lang);
+        }
+
+        function updateUIText() {
+            const langData = translations[currentLang];
+            document.title = langData.title;
+            document.querySelector('h1').textContent = langData.title;
+            document.querySelector('.help-panel h3').textContent = langData.instructions;
+            document.querySelector('.help-panel ol li:nth-child(1)').textContent = langData.step1;
+            document.querySelector('.help-panel ol li:nth-child(2)').textContent = langData.step2;
+            document.querySelector('.help-panel ol li:nth-child(3)').textContent = langData.step3;
+            document.querySelector('.help-panel ol li:nth-child(4)').textContent = langData.step4;
+            document.querySelector('.help-panel p').textContent = langData.tip;
+            document.querySelector('p').textContent = langData.pasteText;
+            document.getElementById('inputText').placeholder = langData.placeholder;
+            document.querySelector('label[for="maxLength"]').firstChild.textContent = langData.maxLength;
+            document.querySelector('label[for="addPrompt"]').lastChild.textContent = langData.addPrompt;
+            document.querySelector('button[onclick="splitText()"]').textContent = langData.splitBtn;
+            document.querySelector('button[onclick="saveSettings()"]').textContent = langData.saveSettings;
+            document.querySelector('button[onclick="loadSettings()"]').textContent = langData.loadSettings;
+            document.querySelector('button[onclick="toggleTheme()"]').textContent = langData.toggleTheme;
+            document.querySelector('button[onclick="saveAsHTML()"]').textContent = langData.saveHTML;
+        }
+
+        // Initialize language
+        if (localStorage.getItem('textSplitterLanguage')) {
+            currentLang = localStorage.getItem('textSplitterLanguage');
+            updateUIText();
+        }
+        document.getElementById('languageSelect').value = currentLang;
+    </script>
+    <style>
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            transition: background-color 0.3s, color 0.3s;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .segment {
+            animation: fadeIn 0.3s ease forwards;
+        }
+        body.dark-theme {
+            background-color: #222;
+            color: #eee;
+        }
+        body.dark-theme .segment {
+            background-color: #333;
+            border-left-color: #4CAF50;
+        }
+        body.dark-theme .help-panel {
+            background-color: #444;
+        }
+        textarea {
+            width: 100%;
+            height: 250px;
+            margin-bottom: 15px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 15px;
+            transition: border-color 0.3s;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #4a6bff;
+            box-shadow: 0 0 0 2px rgba(74, 107, 255, 0.2);
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4a6bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            transform: scale(1);
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+        }
+        .segment {
+            background-color: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #4a6bff;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .segment.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .segment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        .segment-content {
+            display: none;
+            margin-top: 10px;
+        }
+        .segment.expanded .segment-content {
+            display: block;
+        }
+        .copy-btn {
+            padding: 4px 8px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+        .copy-btn:hover {
+            background-color: #0b7dda;
+            transform: translateY(-1px);
+        }
+        .copy-btn:hover {
+            background-color: #0b7dda;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="color: #333; font-weight: 600; margin-bottom: 20px;">文本Prompt分段工具</h1>
+    <div class="help-panel" style="background-color: white; padding: 20px; margin-bottom: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #eee;">
+        <h3 style="margin-top: 0;">使用说明</h3>
+        <ol style="margin-bottom: 0;">
+            <li>将长文本粘贴到下方文本框</li>
+            <li>设置最大分段长度（默认8000字符）</li>
+            <li>选择是否添加确认提示</li>
+            <li>点击"分段"按钮</li>
+        </ol>
+        <p style="margin: 10px 0 0 0; font-size: 0.9em; color: #666;">
+            工具会自动按段落分割文本，当段落过长时会尝试在句子结束处分段，保持语义完整。
+        </p>
+    </div>
+    <p>粘贴您的长文本到下方文本框，然后点击"分段"按钮</p>
+    
+    <textarea id="inputText" placeholder="在此粘贴您的长文本..." oninput="saveDraft()"></textarea>
+    <div style="margin: 15px 0;">
+        <label for="maxLength" style="display: flex; align-items: center;">
+            最大分段长度:
+            <input type="number" id="maxLength" value="8000" min="100" max="10000" style="width: 80px; padding: 6px; margin-left: 8px; border: 1px solid #ddd; border-radius: 4px;">
+        </label>
+    </div>
+    <div style="margin: 15px 0;">
+        <label for="addPrompt" style="display: flex; align-items: center;">
+            <input type="checkbox" id="addPrompt" checked style="transform: scale(1.2); margin-right: 8px;">
+            在每段后添加'请回复收到'提示
+        </label>
+    </div>
+    <button onclick="splitText()">分段</button>
+    <button onclick="saveSettings()" style="margin-left: 10px;">保存设置</button>
+    <button onclick="loadSettings()">加载设置</button>
+    <button onclick="toggleTheme()" style="margin-left: 10px;">切换主题</button>
+    <button onclick="saveAsHTML()" style="margin-left: 10px;">保存为HTML</button>
+    <div style="margin-left: 10px; display: inline-block;">
+        <select id="languageSelect" onchange="changeLanguage(this.value)" style="padding: 8px 12px; border-radius: 4px; border: 1px solid #ddd;">
+            <option value="zh">中文</option>
+            <option value="en">English</option>
+            <option value="fr">Français</option>
+        </select>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        function splitText() {
+            const inputText = document.getElementById('inputText').value;
+            let maxLength = parseInt(document.getElementById('maxLength').value);
+            if (isNaN(maxLength) || maxLength < 100 || maxLength > 10000) {
+                // 添加错误动画效果
+                const maxLengthInput = document.getElementById('maxLength');
+                maxLengthInput.style.border = '2px solid red';
+                maxLengthInput.style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    maxLengthInput.style.border = '';
+                    maxLengthInput.style.animation = '';
+                }, 500);
+                
+                alert('请输入有效的分段长度(100-10000)！');
+                return;
+            }
+            
+            // 播放分段音效
+            const splitSound = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU...');
+            splitSound.volume = 0.3;
+            splitSound.play().catch(e => console.log('音效播放失败:', e));
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '';
+            
+            if (!inputText.trim()) {
+                alert('请输入文本内容！');
+                return;
+            }
+            
+            // 尝试按段落分割
+            let segments = [];
+            const paragraphs = inputText.split(/\n\s*\n/); // 按空行分割段落
+            
+            let currentSegment = '';
+            
+            paragraphs.forEach(para => {
+                if (!para.trim()) return;
+                
+                if (currentSegment.length + para.length + 2 <= maxLength) {
+                    currentSegment += (currentSegment ? '\n\n' : '') + para;
+                } else {
+                    if (currentSegment) {
+                        segments.push(currentSegment);
+                        currentSegment = '';
+                    }
+                    
+                    // 如果单个段落就超过最大长度，强制分割
+                    if (para.length > maxLength) {
+                        let start = 0;
+                        while (start < para.length) {
+                            let end = start + maxLength;
+                            // 尝试在句子结束处分段
+                            let lastPunctuation = Math.max(
+                                para.lastIndexOf('.', end),
+                                para.lastIndexOf('。', end),
+                                para.lastIndexOf('!', end),
+                                para.lastIndexOf('！', end),
+                                para.lastIndexOf('?', end),
+                                para.lastIndexOf('？', end),
+                                para.lastIndexOf(';', end),
+                                para.lastIndexOf('；', end)
+                            );
+                            
+                            if (lastPunctuation > start && (lastPunctuation - start) > maxLength * 0.7) {
+                                end = lastPunctuation + 1;
+                            }
+                            
+                            segments.push(para.substring(start, end));
+                            start = end;
+                        }
+                    } else {
+                        currentSegment = para;
+                    }
+                }
+            });
+            
+            if (currentSegment) {
+                segments.push(currentSegment);
+            }
+            
+            if (segments.length === 0) {
+                segments.push(inputText);
+            }
+            
+            // 显示结果
+            segments.forEach((segment, index) => {
+                const segmentDiv = document.createElement('div');
+                segmentDiv.className = 'segment';
+                setTimeout(() => {
+                    segmentDiv.classList.add('visible');
+                }, index * 100);
+                const addPrompt = document.getElementById('addPrompt').checked;
+            const promptText = addPrompt ? translations[currentLang].confirmText : '';
+            segmentDiv.innerHTML = `
+                <div class="segment-header">
+                    <strong>${translations[currentLang].segmentTitle.replace('${index}', index + 1).replace('${length}', segment.length)}</strong>
+                    <button class="copy-btn" onclick="copyToClipboard(event, ${index})">${translations[currentLang].copyBtn}</button>
+                </div>
+                <div class="segment-content">
+                    ${(promptText + segment).replace(/\n/g, '<br>')}
+                </div>
+            `;
+            segmentDiv.addEventListener('click', function(e) {
+                if(!e.target.classList.contains('copy-btn')) {
+                    this.classList.toggle('expanded');
+                }
+            });
+                resultDiv.appendChild(segmentDiv);
+            });
+        }
+        
+        function copyToClipboard(event, index) {
+            event.stopPropagation();
+            const segmentContent = document.querySelectorAll('.segment-content')[index];
+            const textToCopy = segmentContent.textContent.replace(/\n\n/g, '\n').trim();
+            
+            // 播放复制音效
+            const copySound = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU...');
+            copySound.volume = 0.3;
+            copySound.play().catch(e => console.log('音效播放失败:', e));
+            
+            // 添加动画效果
+            event.target.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                event.target.style.transform = 'scale(1)';
+            }, 200);
+            
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    const originalText = event.target.textContent;
+                    event.target.textContent = '✓ 已复制';
+                    setTimeout(() => {
+                        event.target.textContent = originalText;
+                    }, 2000);
+                })
+                .catch(err => {
+                    console.error('复制失败:', err);
+                    alert('复制失败，请手动选择文本复制');
+                });
+        }
+        
+        function saveSettings() {
+            const settings = {
+                maxLength: document.getElementById('maxLength').value,
+                addPrompt: document.getElementById('addPrompt').checked
+            };
+            localStorage.setItem('textSplitterSettings', JSON.stringify(settings));
+            alert('设置已保存！');
+        }
+        
+        function loadSettings() {
+            const savedSettings = localStorage.getItem('textSplitterSettings');
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                document.getElementById('maxLength').value = settings.maxLength;
+                document.getElementById('addPrompt').checked = settings.addPrompt;
+                alert('设置已加载！');
+            } else {
+                alert('没有找到保存的设置！');
+            }
+        }
+        
+        function toggleTheme() {
+            document.body.classList.toggle('dark-theme');
+            localStorage.setItem('darkThemeEnabled', document.body.classList.contains('dark-theme'));
+        }
+        
+        // 初始化时检查主题设置
+        if (localStorage.getItem('darkThemeEnabled') === 'true') {
+            document.body.classList.add('dark-theme');
+        }
+        
+        // 自动保存草稿功能
+        const inputText = document.getElementById('inputText');
+        const saveDraft = () => {
+            localStorage.setItem('textSplitterDraft', inputText.value);
+        };
+        
+        // 加载草稿
+        if (localStorage.getItem('textSplitterDraft')) {
+            inputText.value = localStorage.getItem('textSplitterDraft');
+        }
+        
+        // 设置自动保存定时器
+        setInterval(saveDraft, 5000);
+        
+        // 页面卸载时保存
+        window.addEventListener('beforeunload', saveDraft);
+        
+        // 保存为HTML文件
+        function saveAsHTML() {
+            const htmlContent = document.documentElement.outerHTML;
+            const blob = new Blob([htmlContent], {type: 'text/html'});
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'text_splitter_' + new Date().toISOString().slice(0, 10) + '.html';
+            document.body.appendChild(a);
+            a.click();
+            
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 100);
+        }
+    </script>
+</body>
+</html>
