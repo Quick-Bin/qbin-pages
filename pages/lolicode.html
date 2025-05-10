@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中文字符编码转换器</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css">
+    <style>
+        textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+        .status-bar {
+            transition: all 0.3s ease;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        body {
+            background-color: #f8f9fa;
+        }
+        .card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+        }
+        .card:hover {
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary {
+            background-color: #1e40af;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #1e3a8a;
+            transform: translateY(-2px);
+        }
+        .btn-success {
+            background-color: #047857;
+            transition: all 0.3s ease;
+        }
+        .btn-success:hover {
+            background-color: #065f46;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="container mx-auto px-4 py-8 max-w-5xl">
+        <h1 class="text-4xl text-center text-blue-700 font-bold mb-8">中文字符编码转换器</h1>
+        
+        <div class="card bg-white rounded-lg p-6 mb-6">
+            <h2 class="text-2xl text-gray-800 mb-4">输入文本</h2>
+            <div class="flex flex-col">
+                <div class="flex justify-between mb-2">
+                    <span class="text-gray-600 text-sm">在下方输入要处理的文本</span>
+                    <div>
+                        <button id="pasteBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded text-sm mr-1">
+                            <i class="fas fa-paste mr-1"></i>粘贴
+                        </button>
+                        <button id="clearInputBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded text-sm">
+                            <i class="fas fa-trash-alt mr-1"></i>清空
+                        </button>
+                    </div>
+                </div>
+                <textarea id="inputText" placeholder="请在此输入文本..." class="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+            </div>
+        </div>
+        
+        <div class="flex flex-wrap justify-center gap-4 mb-6">
+            <button id="encodeBtn" class="btn-primary text-white font-medium py-3 px-6 rounded-lg flex items-center">
+                <i class="fas fa-lock mr-2"></i>编码
+            </button>
+            <button id="decodeBtn" class="btn-success text-white font-medium py-3 px-6 rounded-lg flex items-center">
+                <i class="fas fa-unlock mr-2"></i>解码
+            </button>
+        </div>
+        
+        <div class="card bg-white rounded-lg p-6 mb-6">
+            <h2 class="text-2xl text-gray-800 mb-4">输出结果</h2>
+            <div class="flex flex-col">
+                <div class="flex justify-between mb-2">
+                    <span class="text-gray-600 text-sm">转换结果将显示在下方</span>
+                    <div>
+                        <button id="copyBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded text-sm mr-1">
+                            <i class="fas fa-copy mr-1"></i>复制
+                        </button>
+                        <button id="clearOutputBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded text-sm">
+                            <i class="fas fa-trash-alt mr-1"></i>清空
+                        </button>
+                    </div>
+                </div>
+                <textarea id="outputText" placeholder="转换结果将显示在这里..." readonly class="w-full border border-gray-300 rounded p-3 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+            </div>
+        </div>
+        
+        <div class="status-bar text-center py-2 px-4 mb-6 rounded-lg bg-gray-100">
+            <p id="statusMessage" class="text-gray-600">处理状态: 就绪</p>
+        </div>
+
+        <div class="bg-blue-50 p-6 rounded-lg mb-6">
+            <h3 class="text-xl text-blue-800 mb-4">使用说明</h3>
+            <ul class="list-disc pl-6 text-gray-700 space-y-2">
+                <li>编码：将普通文本转换为中文字符</li>
+                <li>解码：将中文字符转换回原始文本</li>
+                <li>此工具使用特定的中文字符集进行编码，确保完整复制所有编码结果</li>
+                <li>支持处理各种文本，包括英文、数字、符号等</li>
+                <li>编码/解码过程在本地完成，不会传输任何数据到服务器</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // 定义一个16位的中文字符集（可根据需要扩展到64位）
+        const CHINESE_CHARSET = [
+    '没', '莲', '中', '大', '怀', '女', '头', '的', '奇', '那', '咕', '觉', '奸', '魔', '童', '看',
+    '救', '说', '晚', '不', '孕', '穴', '病', '态', '干', '里', '发', '脸', '欧', '白', '癖', '十',
+    '了', '炼', '上', '要', '嘿', '叶', '娇', '笑', '想', '停', '情', '和', '金', '毛', '男', '夜',
+    '萝', '铜', '安', '开', '喜', '月', '把', '你', '为', '耳', '冲', '智', '肉', '精', '娘', '处',
+    '莉', '涩', '哦', '房', '欢', '吃', '玩', '萌', '戒', '朵', '动', '乃', '棒', '液', '行', '新',
+    '控', '好', '喵', '出', '杂', '掉', '坏', '鸣', '敏', '摸', '乃', '哭', '高', '勃', '老', '年',
+    '鲲', '怪', '猫', '透', '鱼', '够', '变', '谢', '感', '华', '体', '塞', '潮', '起', '婆', '羡',
+    '爱', '早', '小', '超', '幼', '下', '成', '神', '能', '叭', '睡', '视', '魅', '恋', '我', '慕'
+];
+
+        // 确保字符集大小是2的幂
+        function isPowerOfTwo(n) {
+            return n > 0 && (n & (n - 1)) === 0;
+        }
+
+        if (!isPowerOfTwo(CHINESE_CHARSET.length)) {
+            updateStatus('错误: 字符集大小必须是2的幂', 'error');
+        }
+
+        // 计算每个字符代表的位数
+        const BITS_PER_CHAR = Math.log2(CHINESE_CHARSET.length);
+        
+        // 创建字符到索引的映射
+        const CHAR_TO_INDEX = {};
+        CHINESE_CHARSET.forEach((char, index) => {
+            CHAR_TO_INDEX[char] = index;
+        });
+
+        // 元素引用
+        const inputText = document.getElementById('inputText');
+        const outputText = document.getElementById('outputText');
+        const encodeBtn = document.getElementById('encodeBtn');
+        const decodeBtn = document.getElementById('decodeBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const pasteBtn = document.getElementById('pasteBtn');
+        const clearInputBtn = document.getElementById('clearInputBtn');
+        const clearOutputBtn = document.getElementById('clearOutputBtn');
+        const statusMessage = document.getElementById('statusMessage');
+
+        // 更新状态信息
+        function updateStatus(message, type = 'info') {
+            statusMessage.textContent = message;
+            const statusBar = statusMessage.parentElement;
+            
+            statusBar.classList.remove('bg-gray-100', 'bg-green-100', 'bg-red-100', 'bg-yellow-100');
+            statusMessage.classList.remove('text-gray-600', 'text-green-600', 'text-red-600', 'text-yellow-600');
+            
+            switch(type) {
+                case 'success':
+                    statusBar.classList.add('bg-green-100');
+                    statusMessage.classList.add('text-green-600');
+                    break;
+                case 'error':
+                    statusBar.classList.add('bg-red-100');
+                    statusMessage.classList.add('text-red-600');
+                    break;
+                case 'warning':
+                    statusBar.classList.add('bg-yellow-100');
+                    statusMessage.classList.add('text-yellow-600');
+                    break;
+                default:
+                    statusBar.classList.add('bg-gray-100');
+                    statusMessage.classList.add('text-gray-600');
+            }
+            
+            statusBar.classList.add('fade-in');
+            setTimeout(() => {
+                statusBar.classList.remove('fade-in');
+            }, 500);
+        }
+
+        // 将文本转换为比特数组
+        function textToBits(text) {
+            const bits = [];
+            for (let i = 0; i < text.length; i++) {
+                const charCode = text.charCodeAt(i);
+                // 获取字符的UTF-16编码，然后转换为16位二进制
+                for (let j = 15; j >= 0; j--) {
+                    bits.push((charCode & (1 << j)) !== 0);
+                }
+            }
+            return bits;
+        }
+
+        // 将比特数组转换为文本
+        function bitsToText(bits) {
+            const chars = [];
+            for (let i = 0; i < bits.length; i += 16) {
+                if (i + 16 <= bits.length) {
+                    let charCode = 0;
+                    for (let j = 0; j < 16; j++) {
+                        if (bits[i + j]) {
+                            charCode |= (1 << (15 - j));
+                        }
+                    }
+                    chars.push(String.fromCharCode(charCode));
+                }
+            }
+            return chars.join('');
+        }
+
+        // 将比特数组中的部分转换为索引
+        function bitsToIndex(bits, startPos, bitsPerChar) {
+            let index = 0;
+            for (let i = 0; i < bitsPerChar; i++) {
+                if (bits[startPos + i]) {
+                    index |= (1 << (bitsPerChar - 1 - i));
+                }
+            }
+            return index;
+        }
+
+        // 编码函数 - 将输入文本编码为中文字符
+        function encode() {
+            try {
+                updateStatus('处理中...', 'info');
+                const text = inputText.value;
+                
+                if (!text) {
+                    updateStatus('请输入要编码的文本', 'warning');
+                    return;
+                }
+                
+                const bits = textToBits(text);
+                const result = [];
+                
+                // 每BITS_PER_CHAR位转换为一个中文字符
+                for (let i = 0; i < bits.length; i += BITS_PER_CHAR) {
+                    const chunk = bits.slice(i, i + BITS_PER_CHAR);
+                    // 如果不足BITS_PER_CHAR位，补0
+                    while (chunk.length < BITS_PER_CHAR) {
+                        chunk.push(false);
+                    }
+                    const index = bitsToIndex(chunk, 0, BITS_PER_CHAR);
+                    result.push(CHINESE_CHARSET[index]);
+                }
+                
+                // 添加结束标记，用于解码时识别填充的位
+                // 使用特殊字符组合作为填充标记
+                const endIndex = (1 << (BITS_PER_CHAR - 1)); // 100...0
+                result.push(CHINESE_CHARSET[endIndex]);
+                
+                outputText.value = result.join('');
+                updateStatus('编码完成！', 'success');
+            } catch (error) {
+                console.error(error);
+                updateStatus('编码过程出错: ' + error.message, 'error');
+            }
+        }
+
+        // 解码函数 - 将中文字符解码为原始文本
+        function decode() {
+            try {
+                updateStatus('处理中...', 'info');
+                const text = inputText.value;
+                
+                if (!text) {
+                    updateStatus('请输入要解码的文本', 'warning');
+                    return;
+                }
+                
+                const bits = [];
+                
+                // 对每个中文字符进行解码
+                for (let i = 0; i < text.length; i++) {
+                    const char = text[i];
+                    const index = CHAR_TO_INDEX[char];
+                    
+                    if (index === undefined) {
+                        updateStatus(`无效的字符: "${char}"，位置: ${i+1}`, 'error');
+                        return;
+                    }
+                    
+                    // 将索引转换为比特并添加到数组
+                    for (let j = BITS_PER_CHAR - 1; j >= 0; j--) {
+                        bits.push((index & (1 << j)) !== 0);
+                    }
+                }
+                
+                // 查找填充标记
+                const endBit = bits.lastIndexOf(true);
+                if (endBit === -1) {
+                    updateStatus('找不到填充标记', 'error');
+                    return;
+                }
+                
+                // 移除填充位
+                bits.splice(endBit);
+                
+                // 移除末尾的0（如果有）
+                while (bits.length % 16 !== 0 && bits.length > 0) {
+                    bits.pop();
+                }
+                
+                const result = bitsToText(bits);
+                outputText.value = result;
+                updateStatus('解码完成！', 'success');
+            } catch (error) {
+                console.error(error);
+                updateStatus('解码过程出错: ' + error.message, 'error');
+            }
+        }
+
+        // 复制结果到剪贴板
+        function copyToClipboard() {
+            if (!outputText.value) {
+                updateStatus('没有内容可复制', 'warning');
+                return;
+            }
+            
+            outputText.select();
+            document.execCommand('copy');
+            // 使用新的Clipboard API（如果可用）
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(outputText.value)
+                    .then(() => {
+                        updateStatus('已复制到剪贴板！', 'success');
+                    })
+                    .catch(err => {
+                        console.error('剪贴板操作失败:', err);
+                        updateStatus('剪贴板操作失败，请手动复制', 'error');
+                    });
+            } else {
+                // 回退到传统方法
+                try {
+                    outputText.select();
+                    const success = document.execCommand('copy');
+                    if (success) {
+                        updateStatus('已复制到剪贴板！', 'success');
+                    } else {
+                        updateStatus('剪贴板操作失败，请手动复制', 'warning');
+                    }
+                } catch (err) {
+                    console.error('剪贴板操作失败:', err);
+                    updateStatus('剪贴板操作失败，请手动复制', 'error');
+                }
+            }
+        }
+
+        // 从剪贴板粘贴
+        async function pasteFromClipboard() {
+            try {
+                if (navigator.clipboard && navigator.clipboard.readText) {
+                    // 使用现代Clipboard API
+                    const text = await navigator.clipboard.readText();
+                    inputText.value = text;
+                    updateStatus('已从剪贴板粘贴', 'success');
+                } else {
+                    // 回退到prompt提示用户粘贴
+                    const text = prompt('请粘贴文本内容:', '');
+                    if (text !== null) {
+                        inputText.value = text;
+                        updateStatus('已粘贴内容', 'success');
+                    }
+                }
+            } catch (err) {
+                console.error('粘贴操作失败:', err);
+                updateStatus('无法访问剪贴板，请手动粘贴', 'error');
+            }
+        }
+
+        // 事件监听
+        encodeBtn.addEventListener('click', encode);
+        decodeBtn.addEventListener('click', decode);
+        copyBtn.addEventListener('click', copyToClipboard);
+        pasteBtn.addEventListener('click', pasteFromClipboard);
+        
+        clearInputBtn.addEventListener('click', () => {
+            inputText.value = '';
+            updateStatus('输入已清空', 'info');
+        });
+        
+        clearOutputBtn.addEventListener('click', () => {
+            outputText.value = '';
+            updateStatus('输出已清空', 'info');
+        });
+
+        // 键盘快捷键
+        document.addEventListener('keydown', (event) => {
+            // Ctrl+Enter 执行编码
+            if (event.ctrlKey && event.key === 'Enter') {
+                encode();
+                event.preventDefault();
+            }
+            // Ctrl+Shift+Enter 执行解码
+            else if (event.ctrlKey && event.shiftKey && event.key === 'Enter') {
+                decode();
+                event.preventDefault();
+            }
+        });
+
+        // 添加拖放支持
+        inputText.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            inputText.classList.add('ring-2', 'ring-blue-500');
+        });
+
+        inputText.addEventListener('dragleave', () => {
+            inputText.classList.remove('ring-2', 'ring-blue-500');
+        });
+
+        inputText.addEventListener('drop', (e) => {
+            e.preventDefault();
+            inputText.classList.remove('ring-2', 'ring-blue-500');
+            
+            if (e.dataTransfer.items) {
+                for (let i = 0; i < e.dataTransfer.items.length; i++) {
+                    if (e.dataTransfer.items[i].kind === 'file') {
+                        const file = e.dataTransfer.items[i].getAsFile();
+                        if (file.type.match('text.*')) {
+                            const reader = new FileReader();
+                            reader.onload = (event) => {
+                                inputText.value = event.target.result;
+                                updateStatus('文件内容已加载', 'success');
+                            };
+                            reader.readAsText(file);
+                        } else {
+                            updateStatus('只支持文本文件', 'warning');
+                        }
+                    } else if (e.dataTransfer.items[i].kind === 'string') {
+                        e.dataTransfer.items[i].getAsString((str) => {
+                            inputText.value = str;
+                            updateStatus('文本已添加', 'success');
+                        });
+                    }
+                }
+            } else {
+                updateStatus('不支持拖放此类内容', 'warning');
+            }
+        });
+    </script>
+    <footer class="text-center text-gray-500 mt-8 pb-6 text-sm">
+        <p>中文字符编码转换器 &copy; 2023</p>
+        <p class="mt-1">本应用所有处理均在本地完成，数据不会上传至任何服务器</p>
+    </footer>
+</body>
+</html>
